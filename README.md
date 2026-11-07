@@ -1,5 +1,9 @@
 # Unitree RL Mjlab
 
+This fork adds **Unitree G1 EDU Stairs**, a 29-joint locomotion task for ascending
+and descending procedural stairs. See the [Kaggle training guide](doc/g1-edu-stairs.md)
+and [experiment index](experiments/README.md) for the task, commands, and results.
+
 
 ## ✳️ Overview
 Unitree RL Mjlab is a reinforcement learning project built upon the
