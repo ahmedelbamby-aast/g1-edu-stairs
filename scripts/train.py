@@ -26,6 +26,7 @@ class TrainConfig:
   agent: RslRlBaseRunnerCfg
   motion_file: str | None = None
   resume_checkpoint: str | None = None
+  init_actor_onnx: str | None = None
   video: bool = False
   video_length: int = 200
   video_interval: int = 2000
@@ -132,6 +133,14 @@ def run_train(task_id: str, cfg: TrainConfig, log_dir: Path) -> None:
   if resume_path is not None:
     print(f"[INFO]: Loading model checkpoint from: {resume_path}")
     runner.load(str(resume_path))
+  if cfg.init_actor_onnx is not None:
+    path = Path(cfg.init_actor_onnx).expanduser().resolve(strict=True)
+    initialize_actor = getattr(runner, "initialize_actor", None)
+    if initialize_actor is None:
+      raise ValueError(f"{task_id} does not support ONNX actor initialization")
+    initial_actor = initialize_actor(path)
+    if rank == 0:
+      dump_yaml(log_dir / "params" / "initial_actor.yaml", initial_actor)
 
   # Only write config files from rank 0 to avoid race conditions.
   if rank == 0:
@@ -147,6 +156,8 @@ def run_train(task_id: str, cfg: TrainConfig, log_dir: Path) -> None:
 
 def launch_training(task_id: str, args: TrainConfig | None = None):
   args = args or TrainConfig.from_task(task_id)
+  if args.init_actor_onnx and (args.resume_checkpoint or args.agent.resume):
+    raise ValueError("Choose a checkpoint resume or ONNX actor initialization")
 
   # Create log directory once before launching workers.
   log_root_path = Path(os.environ.get("MJLAB_LOG_ROOT", "logs/rsl_rl")).resolve()
