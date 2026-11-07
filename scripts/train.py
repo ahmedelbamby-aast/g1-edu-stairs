@@ -25,6 +25,7 @@ class TrainConfig:
   env: ManagerBasedRlEnvCfg
   agent: RslRlBaseRunnerCfg
   motion_file: str | None = None
+  resume_checkpoint: str | None = None
   video: bool = False
   video_length: int = 200
   video_interval: int = 2000
@@ -96,7 +97,9 @@ def run_train(task_id: str, cfg: TrainConfig, log_dir: Path) -> None:
   log_root_path = log_dir.parent  # Go up from specific run dir to experiment dir.
 
   resume_path: Path | None = None
-  if cfg.agent.resume:
+  if cfg.resume_checkpoint is not None:
+    resume_path = Path(cfg.resume_checkpoint).expanduser().resolve(strict=True)
+  elif cfg.agent.resume:
       # Load checkpoint from local filesystem.
       resume_path = get_checkpoint_path(
         log_root_path, cfg.agent.load_run, cfg.agent.load_checkpoint
@@ -146,8 +149,8 @@ def launch_training(task_id: str, args: TrainConfig | None = None):
   args = args or TrainConfig.from_task(task_id)
 
   # Create log directory once before launching workers.
-  log_root_path = Path("logs") / "rsl_rl" / args.agent.experiment_name
-  log_root_path.resolve()
+  log_root_path = Path(os.environ.get("MJLAB_LOG_ROOT", "logs/rsl_rl")).resolve()
+  log_root_path = log_root_path / args.agent.experiment_name
   log_dir_name = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
   if args.agent.run_name:
     log_dir_name += f"_{args.agent.run_name}"
@@ -188,7 +191,10 @@ def launch_training(task_id: str, args: TrainConfig | None = None):
       hostnames=["localhost"],
       workers_per_host=num_gpus,
       backend=None,  # Let rsl_rl handle process group initialization.
-      copy_env_vars=torchrunx.DEFAULT_ENV_VARS_FOR_COPY + ("MUJOCO*",),
+      copy_env_vars=torchrunx.DEFAULT_ENV_VARS_FOR_COPY + (
+        "MUJOCO*", "WARP*", "OMP*", "MKL*", "OPENBLAS*", "NUMEXPR*",
+        "NCCL*", "XDG_CACHE_HOME", "TMPDIR", "PYTHONPATH",
+      ),
     ).run(run_train, task_id, args, log_dir)
 
 
