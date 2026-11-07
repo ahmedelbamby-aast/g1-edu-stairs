@@ -62,14 +62,25 @@ export OPENBLAS_NUM_THREADS="$CPU_THREADS" NUMEXPR_NUM_THREADS="$CPU_THREADS"
 export NCCL_P2P_DISABLE="${NCCL_P2P_DISABLE:-1}"
 export WANDB_MODE=disabled
 
-status=0
-trap 'status=$?; printf "%s\n" "$status" > "$run_dir/exit-code.txt"' EXIT
+gpu_monitor=
+finish() {
+  local status=$?
+  if [[ -n "$gpu_monitor" ]]; then
+    kill "$gpu_monitor" 2>/dev/null || true
+    wait "$gpu_monitor" 2>/dev/null || true
+  fi
+  printf '%s\n' "$status" > "$run_dir/exit-code.txt"
+}
+trap finish EXIT
 cp "$profile" "$run_dir/profile.env"
 git rev-parse HEAD > "$run_dir/git-commit.txt"
 uv pip freeze --exclude-editable > "$run_dir/requirements.txt"
 nvidia-smi --query-gpu=name,memory.total,driver_version --format=csv > "$run_dir/gpus.csv"
 printf 'cpu_threads=%s\nnum_cpus=%s\nnccl_p2p_disable=%s\n' \
   "$CPU_THREADS" "$(nproc)" "$NCCL_P2P_DISABLE" > "$run_dir/runtime.txt"
+nvidia-smi --query-gpu=timestamp,index,memory.used,utilization.gpu,power.draw \
+  --format=csv,nounits --loop=2 > "$run_dir/gpu-samples.csv" &
+gpu_monitor=$!
 
 command=(
   .venv/bin/python -m scripts.train Unitree-G1-EDU-Stairs
