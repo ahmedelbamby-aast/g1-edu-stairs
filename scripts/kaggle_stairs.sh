@@ -46,8 +46,6 @@ case "$mode" in
   benchmark) ITERATIONS=12; SAVE_INTERVAL=100 ;;
 esac
 for key in "${!overrides[@]}"; do printf -v "$key" '%s' "${overrides[$key]}"; done
-read -r -a gpu_ids <<< "$GPU_IDS"
-
 run_dir="$results/$run_id"
 mkdir -p "$results"
 mkdir "$run_dir"
@@ -69,7 +67,7 @@ printf 'cpu_threads=%s\nnum_cpus=%s\nnccl_p2p_disable=%s\n' \
 
 command=(
   .venv/bin/python -m scripts.train Unitree-G1-EDU-Stairs
-  --gpu-ids "${gpu_ids[@]}"
+  --gpu-ids "$GPU_IDS"
   --env.scene.num-envs "$NUM_ENVS"
   --agent.seed "$SEED"
   --agent.max-iterations "$ITERATIONS"
