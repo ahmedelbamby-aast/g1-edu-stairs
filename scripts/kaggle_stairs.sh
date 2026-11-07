@@ -23,8 +23,14 @@ if [[ "$mode" == install ]]; then
   exit
 fi
 
+if [[ "$mode" == evaluate ]]; then
+  shift
+  export OMP_NUM_THREADS=2 MKL_NUM_THREADS=2 OPENBLAS_NUM_THREADS=2
+  exec .venv/bin/python -m scripts.evaluate_stairs "$@"
+fi
+
 if [[ "$mode" != train && "$mode" != smoke && "$mode" != benchmark ]]; then
-  echo "Usage: bash scripts/kaggle_stairs.sh install | {smoke,benchmark,train} RUN_ID [training flags]" >&2
+  echo "Usage: bash scripts/kaggle_stairs.sh install | {smoke,benchmark,train} RUN_ID [training flags] | evaluate [evaluation flags]" >&2
   exit 2
 fi
 run_id="${2:-}"

@@ -8,6 +8,6 @@ torch==2.11.0+cu128
 torchvision==0.26.0+cu128
 torchrunx==0.4.0
 tyro==1.0.17
-warp-lang==1.19.0
+warp-lang==1.12.1
 onnxruntime==1.31.1
 tensorboard==2.21.0
