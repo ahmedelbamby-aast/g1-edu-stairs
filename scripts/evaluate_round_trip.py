@@ -18,6 +18,7 @@ from src.tasks.campus.skills import skill
 from src.tasks.campus.terrain import DIFFICULTIES
 from src.tasks.round_trip import TASK_ID, round_trip_env_cfg, round_trip_runner_cfg
 from src.tasks.round_trip.terrain import COURSES, DEPTHS, PACE_BANDS
+from src.tasks.stair_mastery import TASK_ID as MASTERY_ID, mastery_env_cfg, mastery_runner_cfg
 
 
 @torch.inference_mode()
@@ -30,13 +31,18 @@ def evaluate(args):
     for speed in range(len(PACE_BANDS))
   ]
   count = args.episodes_per_cell
-  cfg = round_trip_env_cfg(play=True, stress=args.suite == "stress", terrain_seed=args.terrain_seed)
+  if args.task == TASK_ID:
+    cfg = round_trip_env_cfg(play=True, stress=args.suite == "stress", terrain_seed=args.terrain_seed)
+    agent = round_trip_runner_cfg()
+  else:
+    cfg = mastery_env_cfg(play=True, student=args.task.endswith("-Student"),
+                          stress=args.suite == "stress", terrain_seed=args.terrain_seed)
+    agent = mastery_runner_cfg()
   cfg.seed = args.seed
   cfg.scene.num_envs = len(cells) * count
   command = cfg.commands["skill"]
   command.fixed_level = None
   command.promote_after = command.demote_after = 10_000
-  agent = round_trip_runner_cfg()
   dump_yaml(args.output.with_suffix(".env.yaml"), asdict(cfg))
   dump_yaml(args.output.with_suffix(".agent.yaml"), asdict(agent))
   env = ManagerBasedRlEnv(cfg, device=args.device)
@@ -113,7 +119,7 @@ def evaluate(args):
         "mean_down_mps_on_completion": float(actual_complete[:, 1].mean()) if n else None,
       })
     return {
-      "task": TASK_ID, "suite": args.suite, "seed": args.seed, "terrain_seed": args.terrain_seed,
+      "task": args.task, "suite": args.suite, "seed": args.seed, "terrain_seed": args.terrain_seed,
       "source_commit": subprocess.check_output(["git", "rev-parse", "HEAD"], text=True).strip(),
       "checkpoint": args.checkpoint.name, "checkpoint_sha256": hashlib.sha256(args.checkpoint.read_bytes()).hexdigest(),
       "onnx_max_abs_error": parity, "pace_relative_tolerance": command.speed_tolerance, "cells": rows,
@@ -125,6 +131,7 @@ def evaluate(args):
 def main():
   parser = argparse.ArgumentParser(description=__doc__)
   parser.add_argument("--checkpoint", type=Path, required=True)
+  parser.add_argument("--task", choices=(TASK_ID, MASTERY_ID, "Unitree-G1-EDU-Stair-Student"), default=TASK_ID)
   parser.add_argument("--output", type=Path, required=True)
   parser.add_argument("--onnx", type=Path)
   parser.add_argument("--device", default="cuda:0")
