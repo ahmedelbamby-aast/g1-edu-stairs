@@ -1,0 +1,42 @@
+{
+  "checkpoint": "model_159.pt",
+  "terrain_seed": 41,
+  "resolution": [
+    1280,
+    720
+  ],
+  "courses": [
+    {
+      "course": "level-1-up-standard",
+      "outcome": "landed",
+      "furthest_distance_m": 4.217,
+      "frames": 75,
+      "png": "level-1-up-standard.png",
+      "mp4": "level-1-up-standard.mp4"
+    },
+    {
+      "course": "level-3-down-standard",
+      "outcome": "landed",
+      "furthest_distance_m": 4.147,
+      "frames": 64,
+      "png": "level-3-down-standard.png",
+      "mp4": "level-3-down-standard.mp4"
+    },
+    {
+      "course": "level-5-up-compact",
+      "outcome": "landed",
+      "furthest_distance_m": 4.177,
+      "frames": 57,
+      "png": "level-5-up-compact.png",
+      "mp4": "level-5-up-compact.mp4"
+    },
+    {
+      "course": "level-5-down-compact",
+      "outcome": "landed",
+      "furthest_distance_m": 4.091,
+      "frames": 79,
+      "png": "level-5-down-compact.png",
+      "mp4": "level-5-down-compact.mp4"
+    }
+  ]
+}

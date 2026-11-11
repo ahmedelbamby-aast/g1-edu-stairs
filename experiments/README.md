@@ -24,3 +24,8 @@ flat-walking actor. The [resolved settings](results/reference-t4-s42/) record
 the exact environment, algorithm, launch command, and actor transfer.
 The [recovery release](https://github.com/ahmedelbamby-aast/g1-edu-stairs/releases/tag/run-reference-t4-s42-checkpoint)
 contains a saved checkpoint and its settings.
+
+The [full reference release](https://github.com/ahmedelbamby-aast/g1-edu-stairs/releases/tag/run-reference-t4-s42)
+contains all nine checkpoints, the ONNX export, evaluation, TensorBoard and
+GPU logs, and four 720p clips. The final checkpoint completed 299 of 320
+held-out stair episodes. [Training report](../doc/training-report.md)

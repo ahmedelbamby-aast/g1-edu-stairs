@@ -27,7 +27,7 @@ The standard lane is 1.9 m wide. Compact lanes narrow from 1.8 m to 1.25 m as di
 | CPU | 4 logical threads, with 2 numerical-library threads per worker |
 | Parallel worlds | 3,072 per GPU, 6,144 total |
 | Steps collected per update | 24 per robot, 147,456 total |
-| Planned length | 160 updates, 23,592,960 simulated steps |
+| Completed training | 160 updates, 23,592,960 simulated steps |
 | Physics and control | Physics at 200 Hz, policy actions at 50 Hz |
 | Episode limit | 14 simulated seconds |
 | Training seed and terrain seed | 42 and 41 |
@@ -88,12 +88,34 @@ These screenshots show the starting positions and geometry that the simulator us
 | **Compact ascent · level 5** | **Compact descent · level 5** |
 | ![Six narrow steps up with the G1 at the bottom](media/course-previews/level-5-up-compact.png) | ![Six narrow steps down with the G1 at the top](media/course-previews/level-5-down-compact.png) |
 
-The renderer writes 1280 × 720 clips under `/kaggle/content/g1-edu-stairs/videos`. Each recorded clip shows one selected simulation episode. Use the evaluation counts to judge how often the robot finishes.
+The four 1280 × 720 clips are saved under `/kaggle/content/g1-edu-stairs/videos`. They use the final checkpoint and the training terrain seed. Each shows one completed episode selected from four attempts. The four clips total about 352 KB.
 
-## Evaluation and deployment
+| Clip | Duration |
+| --- | ---: |
+| [Level 1 standard ascent](https://github.com/ahmedelbamby-aast/g1-edu-stairs/releases/download/run-reference-t4-s42/level-1-up-standard.mp4) | 6.0 s |
+| [Level 3 standard descent](https://github.com/ahmedelbamby-aast/g1-edu-stairs/releases/download/run-reference-t4-s42/level-3-down-standard.mp4) | 5.1 s |
+| [Level 5 compact ascent](https://github.com/ahmedelbamby-aast/g1-edu-stairs/releases/download/run-reference-t4-s42/level-5-up-compact.mp4) | 4.6 s |
+| [Level 5 compact descent](https://github.com/ahmedelbamby-aast/g1-edu-stairs/releases/download/run-reference-t4-s42/level-5-down-compact.mp4) | 6.3 s |
 
-The evaluation tests 16 episodes for each of the 24 course and difficulty combinations, for 384 episodes in total. It uses terrain seed 79, with different step placement and compact stair dimensions from training. It records completed landings, falls, lane exits, and timeouts. The evaluator can also compare the exported ONNX policy against the PyTorch policy using observations from the simulator.
+## Evaluation results
+
+The final checkpoint completed **299 of 320 stair episodes (93.4%)** on the held-out courses. It finished **142 of 160 ascents (88.8%)** and **157 of 160 descents (98.1%)**. The hardest course was level 5 compact ascent, where it finished 5 of 16 episodes.
+
+| Level | Standard ascent | Standard descent | Compact ascent | Compact descent |
+| --- | ---: | ---: | ---: | ---: |
+| 0 · flat | 16/16 | 16/16 | 16/16 | 16/16 |
+| 1 | 16/16 | 16/16 | 16/16 | 16/16 |
+| 2 | 15/16 | 16/16 | 16/16 | 16/16 |
+| 3 | 16/16 | 16/16 | 16/16 | 16/16 |
+| 4 | 16/16 | 15/16 | 15/16 | 16/16 |
+| 5 | 11/16 | 14/16 | 5/16 | 16/16 |
+
+The 384-episode evaluation used terrain seed 79, which changed step placement and compact stair dimensions from training. It recorded 363 supported finishes, 13 falls, 8 lane exits, and zero timeouts. The exported ONNX policy matched the PyTorch actions within a maximum absolute difference of 5.96 × 10⁻⁷ on the checked observations. [Raw evaluation](../experiments/results/reference-t4-s42/evaluation.json)
+
+Training took 11 minutes and 11 seconds in the PPO loop. The median update took 4.11 seconds after the first update, or about 35,900 simulated steps per second. Peak sampled memory use was 2,279 MiB on GPU 0 and 2,327 MiB on GPU 1. Both GPUs reached 100% utilization in sampled intervals.
+
+## Physical robot interface
 
 The simulator and export use Unitree's motor order and joint settings. Physical use with SDK2 still needs a terrain sensor that provides the 63 terrain values and a heading command aligned with the flight. The work here uses the simulated G1 EDU.
 
-[Kaggle setup and recovery](kaggle-recovery.md) · [Experiment index](../experiments/README.md) · [Resolved reference settings](../experiments/results/reference-t4-s42/)
+[Kaggle setup and recovery](kaggle-recovery.md) · [Experiment index](../experiments/README.md) · [Resolved reference settings](../experiments/results/reference-t4-s42/) · [Full run and video downloads](https://github.com/ahmedelbamby-aast/g1-edu-stairs/releases/tag/run-reference-t4-s42)
