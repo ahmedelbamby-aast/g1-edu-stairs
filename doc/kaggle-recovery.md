@@ -52,9 +52,7 @@ Replace the placeholders with the extracted path. Resume restores the policy, cr
 ## Render media headlessly
 
 ```bash
-bash scripts/kaggle_stairs.sh render \
-  --checkpoint /absolute/path/to/model_N.pt \
-  --output /kaggle/content/g1-edu-stairs/videos
+bash scripts/render_reference.sh reference-001
 ```
 
-Omit the checkpoint for course screenshots at the starting pose. Add `--screenshots-only` with a checkpoint to capture a still from each rollout. For a single course, add flags such as `--course down_compact --level 5`. The output includes a small JSON file that identifies the course and records what happened in the selected episode.
+This renders the latest checkpoint to `/kaggle/content/g1-edu-stairs/videos` and includes the media in the run archive. Add `--screenshots-only` to capture a still from each rollout, or `--course down_compact --level 5` for a single course. For course previews at the starting pose, run `bash scripts/kaggle_stairs.sh render --output /kaggle/working/g1-edu-stairs/course-previews`. The output includes a JSON file that identifies each course and records the outcome of the selected episode.

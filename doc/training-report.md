@@ -67,6 +67,17 @@ The critic gets 176 values during training, including additional body speed and 
 
 The robot earns reward for moving forward at the target speed, keeping its heading, and finishing on the landing. A landing counts when the pelvis crosses the finish line, both feet are supported on the landing, and the robot is upright. The policy loses reward for drifting sideways, slipping, landing hard, moving joints abruptly, hitting its own body, or falling. The stairs task allows vertical movement so the robot can step up and down while still tracking its forward speed.
 
+| Selected reward or penalty | Configured weight |
+| --- | ---: |
+| Forward-speed tracking | +1.2 |
+| Heading-rate tracking | +1.0 |
+| Forward progress | +1.0 |
+| Staying near the lane center | −2.0 × squared sideways offset |
+| Supported finish | +250.0 on the finishing step |
+| Fall or leaving the lane | −150.0 on the failure step |
+
+MuJoCo applies these weights to different measurements and scales the reward by the control-step duration. The numbers in the table are configuration weights.
+
 ## Course screenshots
 
 These screenshots show the starting positions and geometry that the simulator uses for training.

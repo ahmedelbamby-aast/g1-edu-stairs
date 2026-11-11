@@ -43,6 +43,7 @@ if [[ "$mode" == render ]]; then
   shift
   export MUJOCO_GL="${STAIRS_RENDER_GL:-osmesa}"
   export OMP_NUM_THREADS=2 MKL_NUM_THREADS=2 OPENBLAS_NUM_THREADS=2
+  export LP_NUM_THREADS="${LP_NUM_THREADS:-2}"
   exec .venv/bin/python -m scripts.render_stairs "$@"
 fi
 
