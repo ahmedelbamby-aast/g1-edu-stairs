@@ -32,6 +32,10 @@ The student task applies episode-level foothold bias up to 1.5 cm per axis, Gaus
 
 The smoke suite performs zero optimizer steps and checks that policy weights and observation normalization remain identical before and after inference. Its exported `smoke-only.onnx` is a transfer-validation artifact.
 
+The completed [mastery-smoke-v5 report](../experiments/results/mastery-smoke-v5/) passed all 13 task entries. Each new task used 324 parallel coverage worlds. The phase fixtures exercised every level, geometry and pace, including both turn directions. Checkpoint save/load retained the curriculum evidence. Maximum actor-transfer error was 9.54e-7; the new ONNX export differed from PyTorch by at most 5.36e-7. A separate student check passed on GPU 1 with zero optimizer steps. Both GPUs were idle after the checks.
+
+The smoke used the existing round-trip checkpoint in all three teacher slots to verify the workflow. Separate improved expert checkpoints still need future training. The checkpoint under `checkpoint-check` is labelled `smoke_only` and contains no new learning. The full [recovery archive](https://github.com/ahmedelbamby-aast/g1-edu-stairs/releases/tag/run-mastery-smoke-v5) holds resolved smoke settings, audits, logs, software versions and check artifacts.
+
 ```bash
 export LD_LIBRARY_PATH=/usr/local/nvidia/lib64
 export WARP_CACHE_PATH=/codex_download_here_work_here/cache/warp
@@ -45,6 +49,23 @@ export OMP_NUM_THREADS=2 MKL_NUM_THREADS=2 OPENBLAS_NUM_THREADS=2
 ## Prepared future training workflow
 
 The [mastery profile](../experiments/profiles/kaggle-mastery.env) defines 500 updates with checkpoints every 100. The experiment launcher supports ascent, turn, descent, round-trip and student stages. It runs clean and stress evaluations between 100-update segments, then resumes the full training state for the next segment. Choose different run IDs and `--seed` values for repeated experiments.
+
+The prepared RL algorithm is PPO, which improves the policy in small steps using rewards from parallel simulated robots. Every robot has its own physics state; they share the policy being improved. Each T4 runs 1,080 robots, with two CPU threads assigned to its process. This is the starting profile for the larger observation model; throughput and memory use still need measurement in a future training run.
+
+| Prepared setting | Value |
+| --- | --- |
+| Parallel robots | 2,160 total across two T4s |
+| Simulation steps collected per robot per update | 24 |
+| Training updates | 500 per explicitly launched stage |
+| Evaluation and checkpoint interval | 100 updates |
+| PPO learning rate / optimizer | 0.0003, fixed / Adam |
+| Passes over collected samples / sample groups | 5 / 4 |
+| PPO clipping / discount / GAE | 0.2 / 0.99 / 0.95 |
+| Exploration reward coefficient / gradient limit | 0.003 / 1.0 |
+| Policy and value networks | 512, 256, 128 hidden units; ELU |
+| Student imitation learning rate / optimizer | 0.0001 / Adam |
+
+Student imitation matches the selected expert's actions with a mean squared error loss. It is a separate supervised learning stage. Its rollout starts with 75% teacher actions and reduces this share to 15%. All settings and source-policy checksums are recorded in its manifest; the RL launcher also records resolved configuration files, geometry and physics audits, source commit, package versions and runtime settings.
 
 This command prints the prepared schedule without launching training.
 

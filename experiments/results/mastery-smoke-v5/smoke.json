@@ -1,0 +1,148 @@
+{
+  "optimizer_steps": 0,
+  "reports": [
+    {
+      "task": "Unitree-G1-EDU-Stairs",
+      "inference_steps": 3,
+      "balance_fixture": false
+    },
+    {
+      "task": "Unitree-G1-EDU-Campus",
+      "inference_steps": 3,
+      "balance_fixture": false
+    },
+    {
+      "task": "Unitree-G1-EDU-Balance-Left",
+      "inference_steps": 3,
+      "balance_fixture": true
+    },
+    {
+      "task": "Unitree-G1-EDU-Balance-Right",
+      "inference_steps": 3,
+      "balance_fixture": true
+    },
+    {
+      "task": "Unitree-G1-EDU-Step-Up",
+      "inference_steps": 3,
+      "balance_fixture": false
+    },
+    {
+      "task": "Unitree-G1-EDU-Step-Down",
+      "inference_steps": 3,
+      "balance_fixture": false
+    },
+    {
+      "task": "Unitree-G1-EDU-Campus-Flights",
+      "inference_steps": 3,
+      "balance_fixture": false
+    },
+    {
+      "task": "Unitree-G1-EDU-Stair-Round-Trip",
+      "inference_steps": 3,
+      "balance_fixture": false
+    },
+    {
+      "task": "Unitree-G1-EDU-Stair-Mastery",
+      "inference_steps": 12,
+      "actor_width": 785,
+      "actor_transfer": {
+        "source": "policy.onnx",
+        "source_sha256": "d6cffb81c6a69b00f73bce4f504be3e62bac04813a3fac159708e8402aee9481",
+        "onnx_max_abs_error": 5.960464477539062e-07,
+        "exploration_std": 0.28,
+        "normalization_prior_samples": 262144
+      },
+      "optimizer_steps": 0,
+      "coverage_cells": 324,
+      "phases": [
+        "ASCEND:approach",
+        "ASCEND:shift",
+        "ASCEND:lift",
+        "ASCEND:clear",
+        "ASCEND:plant",
+        "ASCEND:transfer",
+        "ASCEND:finish",
+        "DESCEND:approach",
+        "DESCEND:shift",
+        "DESCEND:lift",
+        "DESCEND:clear",
+        "DESCEND:plant",
+        "DESCEND:transfer",
+        "DESCEND:finish",
+        "turn:-1",
+        "turn:+1",
+        "downhill_speed_penalty",
+        "two_valid_footholds",
+        "controlled_load_transfer",
+        "ascent_expert_finish"
+      ],
+      "curriculum": [
+        "rolling_promotion",
+        "rolling_demotion",
+        "asynchronous_evidence_accumulation",
+        "initialization_excluded",
+        "fixed_level_preserved"
+      ],
+      "onnx_error": 5.364418029785156e-07,
+      "curriculum_checkpoint_restore": "passed"
+    },
+    {
+      "task": "Unitree-G1-EDU-Stair-Expert-Ascent",
+      "inference_steps": 12,
+      "actor_width": 785,
+      "actor_transfer": {
+        "source": "policy.onnx",
+        "source_sha256": "d6cffb81c6a69b00f73bce4f504be3e62bac04813a3fac159708e8402aee9481",
+        "onnx_max_abs_error": 5.960464477539062e-07,
+        "exploration_std": 0.28,
+        "normalization_prior_samples": 262144
+      },
+      "optimizer_steps": 0,
+      "coverage_cells": 324
+    },
+    {
+      "task": "Unitree-G1-EDU-Stair-Expert-Descent",
+      "inference_steps": 12,
+      "actor_width": 785,
+      "actor_transfer": {
+        "source": "policy.onnx",
+        "source_sha256": "d6cffb81c6a69b00f73bce4f504be3e62bac04813a3fac159708e8402aee9481",
+        "onnx_max_abs_error": 7.152557373046875e-07,
+        "exploration_std": 0.28,
+        "normalization_prior_samples": 262144
+      },
+      "optimizer_steps": 0,
+      "coverage_cells": 324
+    },
+    {
+      "task": "Unitree-G1-EDU-Stair-Expert-Turn",
+      "inference_steps": 12,
+      "actor_width": 785,
+      "actor_transfer": {
+        "source": "policy.onnx",
+        "source_sha256": "d6cffb81c6a69b00f73bce4f504be3e62bac04813a3fac159708e8402aee9481",
+        "onnx_max_abs_error": 5.662441253662109e-07,
+        "exploration_std": 0.28,
+        "normalization_prior_samples": 262144
+      },
+      "optimizer_steps": 0,
+      "coverage_cells": 324
+    },
+    {
+      "task": "Unitree-G1-EDU-Stair-Student",
+      "inference_steps": 12,
+      "actor_width": 785,
+      "actor_transfer": {
+        "source": "policy.onnx",
+        "source_sha256": "d6cffb81c6a69b00f73bce4f504be3e62bac04813a3fac159708e8402aee9481",
+        "onnx_max_abs_error": 9.5367431640625e-07,
+        "exploration_std": 0.28,
+        "normalization_prior_samples": 262144
+      },
+      "optimizer_steps": 0,
+      "coverage_cells": 324,
+      "imitation_forward_loss": 0.02644430287182331,
+      "history_reset": "passed"
+    }
+  ]
+}

@@ -55,3 +55,11 @@ practice in all 324 family, depth, speed and difficulty combinations on each GPU
 | [Round-trip smoke test](https://github.com/ahmedelbamby-aast/g1-edu-stairs/releases/tag/run-round-trip-smoke-s42) | Two-GPU PPO and verified actor transfer. |
 | [Round-trip pilot recovery copy](https://github.com/ahmedelbamby-aast/g1-edu-stairs/releases/tag/run-round-trip-pilot-s42-checkpoint) | Saved checkpoint and run audit. [Resolved settings](results/round-trip-pilot-s42/) |
 | [Round-trip pilot full run](https://github.com/ahmedelbamby-aast/g1-edu-stairs/releases/tag/run-round-trip-pilot-s42) | 160 PPO updates. Evaluation completed 263/648 clean and 223/648 stress routes. Of those, 144 clean and 109 stress trials met the requested pace in both directions. |
+
+## Additive mastery implementation
+
+The [mastery guide](../doc/stair-mastery.md) describes the adaptive curriculum, new experts, downhill controls, finer terrain inputs, history and student imitation workflow. All existing levels and stages are retained.
+
+| Run | Evidence |
+| --- | --- |
+| [Mastery inference smoke](results/mastery-smoke-v5/) | All 13 task entries passed; all ascent/descent phases and both turns checked. Each new task covered 324 geometry, depth, speed and level combinations. Zero optimizer steps. [Full recovery archive](https://github.com/ahmedelbamby-aast/g1-edu-stairs/releases/tag/run-mastery-smoke-v5) |

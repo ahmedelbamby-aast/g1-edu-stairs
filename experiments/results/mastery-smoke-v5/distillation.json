@@ -1,0 +1,36 @@
+{
+  "settings": {
+    "ascent": "/kaggle/working/g1-edu-stairs/round-trip-pilot-s42/g1_edu_stair_round_trip/2026-11-11_14-17-57/model_159.pt",
+    "turn": "/kaggle/working/g1-edu-stairs/round-trip-pilot-s42/g1_edu_stair_round_trip/2026-11-11_14-17-57/model_159.pt",
+    "descent": "/kaggle/working/g1-edu-stairs/round-trip-pilot-s42/g1_edu_stair_round_trip/2026-11-11_14-17-57/model_159.pt",
+    "init_actor_onnx": "/kaggle/working/g1-edu-stairs/round-trip-pilot-s42/g1_edu_stair_round_trip/2026-11-11_14-17-57/policy.onnx",
+    "output": "/kaggle/working/g1-edu-stairs/mastery-student-check",
+    "steps": 5000,
+    "num_envs": 12,
+    "seed": 42,
+    "learning_rate": 0.0001,
+    "device": "cuda:1",
+    "check_only": true
+  },
+  "source_commit": "9a1a75b879a93c50e5d1cd0a26cec060d046dc70",
+  "sha256": {
+    "ascent": "10b541ac0e969db0c82f8c32866456a305cda40777e028d7e85ffe24624ab875",
+    "turn": "10b541ac0e969db0c82f8c32866456a305cda40777e028d7e85ffe24624ab875",
+    "descent": "10b541ac0e969db0c82f8c32866456a305cda40777e028d7e85ffe24624ab875",
+    "init_actor_onnx": "d6cffb81c6a69b00f73bce4f504be3e62bac04813a3fac159708e8402aee9481"
+  },
+  "environment": {
+    "CUDA_VISIBLE_DEVICES": null,
+    "OMP_NUM_THREADS": "2",
+    "WARP_CACHE_PATH": "/codex_download_here_work_here/cache/warp"
+  },
+  "optimizer_steps": 0,
+  "initial_actor": {
+    "source": "policy.onnx",
+    "source_sha256": "d6cffb81c6a69b00f73bce4f504be3e62bac04813a3fac159708e8402aee9481",
+    "onnx_max_abs_error": 4.76837158203125e-07,
+    "exploration_std": 0.28,
+    "normalization_prior_samples": 262144
+  },
+  "check_loss": 0.02226806804537773
+}

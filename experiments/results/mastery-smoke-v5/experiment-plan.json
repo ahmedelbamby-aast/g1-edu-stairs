@@ -1,0 +1,9 @@
+{
+  "stage": "round_trip",
+  "task": "Unitree-G1-EDU-Stair-Mastery",
+  "updates": 500,
+  "evaluate_every": 100,
+  "seed": 42,
+  "run_prefix": "mastery-seed42",
+  "plan_only": true
+}
