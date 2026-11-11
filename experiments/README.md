@@ -54,3 +54,4 @@ practice in all 324 family, depth, speed and difficulty combinations on each GPU
 | --- | --- |
 | [Round-trip smoke test](https://github.com/ahmedelbamby-aast/g1-edu-stairs/releases/tag/run-round-trip-smoke-s42) | Two-GPU PPO and verified actor transfer. |
 | [Round-trip pilot recovery copy](https://github.com/ahmedelbamby-aast/g1-edu-stairs/releases/tag/run-round-trip-pilot-s42-checkpoint) | Saved checkpoint and run audit. [Resolved settings](results/round-trip-pilot-s42/) |
+| [Round-trip pilot full run](https://github.com/ahmedelbamby-aast/g1-edu-stairs/releases/tag/run-round-trip-pilot-s42) | 160 PPO updates. Evaluation completed 263/648 clean and 223/648 stress routes. Of those, 144 clean and 109 stress trials met the requested pace in both directions. |

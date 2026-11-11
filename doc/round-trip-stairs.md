@@ -54,3 +54,31 @@ bash scripts/evaluate_kaggle_round_trip.sh round-trip-001
 ```
 
 Every run saves its resolved PPO and environment settings, teacher checksum, GPU telemetry, actual stair geometry, phase metrics, and sampled startup physics values. The audit also records each world's initial pace, turn direction, and practice assignment. The archive includes the checkpoints and both evaluation configurations. [Experiment index](../experiments/README.md)
+
+The first pilot completed 160 PPO updates from the combined campus policy. Evaluation used terrain seed 79 and two full routes per cell, one for each turn direction. All trials started at the bottom. Each suite covered 324 cells and 648 trials. These small per-cell counts provide an initial coverage check.
+
+| Pace | Clean completed routes | Stress completed routes | Clean routes within target pace in both directions | Stress routes within target pace in both directions |
+| --- | ---: | ---: | ---: | ---: |
+| Slow | 100/216 | 74/216 | 14/216 | 12/216 |
+| Normal | 96/216 | 85/216 | 77/216 | 55/216 |
+| Fast | 67/216 | 64/216 | 53/216 | 42/216 |
+| All | 263/648 | 223/648 | 144/648 | 109/648 |
+
+On completed clean routes, the average ascent/descent speeds were 0.260/0.393 m/s for the slow band, 0.357/0.502 m/s for normal, and 0.474/0.608 m/s for fast. Slow descent therefore needs more training to respect the requested speed. In the stress suite, 291 of the 292 trials that reached the top also completed the turn. The remaining challenge is reaching the top and completing the return reliably.
+
+| Difficulty | Clean completed routes | Stress completed routes |
+| --- | ---: | ---: |
+| 0 | 99/108 | 99/108 |
+| 1 | 89/108 | 90/108 |
+| 2 | 53/108 | 30/108 |
+| 3 | 21/108 | 4/108 |
+| 4 | 1/108 | 0/108 |
+| 5 | 0/108 | 0/108 |
+
+| Tread band | Clean completed routes | Stress completed routes |
+| --- | ---: | ---: |
+| Short | 68/216 | 60/216 |
+| Medium | 88/216 | 79/216 |
+| Long | 107/216 | 84/216 |
+
+The simulation represents all requested depth, speed and level combinations. This checkpoint still falls frequently on the higher stairs and has yet to demonstrate the requested reliability for physical use. [Exact settings and raw evaluations](../experiments/results/round-trip-pilot-s42/) · [Checkpoints and complete run audit](https://github.com/ahmedelbamby-aast/g1-edu-stairs/releases/tag/run-round-trip-pilot-s42)
