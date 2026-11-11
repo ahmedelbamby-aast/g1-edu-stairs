@@ -101,7 +101,7 @@ nvidia-smi --query-gpu=timestamp,index,memory.used,utilization.gpu,power.draw \
 gpu_monitor=$!
 
 command=(
-  .venv/bin/python -m scripts.train Unitree-G1-EDU-Stairs
+  .venv/bin/python -m scripts.train "${STAIRS_TASK:-Unitree-G1-EDU-Stairs}"
   --gpu-ids "$GPU_IDS"
   --env.scene.num-envs "$NUM_ENVS"
   --agent.seed "$SEED"

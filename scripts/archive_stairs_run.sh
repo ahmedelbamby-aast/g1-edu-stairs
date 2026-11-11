@@ -17,12 +17,13 @@ case "$mode" in
     ;;
   checkpoint)
     archive="$run_id-checkpoint.tar.gz"
-    checkpoint=$(find "$run/g1_edu_stairs" -type f -name 'model_*.pt' -print | sort -V | tail -n 1)
+    checkpoint=$(find "$run" -mindepth 3 -type f -name 'model_*.pt' -print | sort -V | tail -n 1)
     test -n "$checkpoint"
     files=("$run_id/git-commit.txt" "$run_id/profile.env" "$run_id/command.sh"
       "$run_id/requirements.txt" "$run_id/runtime.txt" "$run_id/gpus.csv"
-      "${checkpoint#"$results/"}" "${checkpoint%/*}/params")
-    files[-1]=${files[-1]#"$results/"}
+      "${checkpoint#"$results/"}" "${checkpoint#"$results/"}")
+    files[-1]="${files[-1]%/*}/params"
+    if [[ -d "${checkpoint%/*}/audit" ]]; then files+=("${files[-1]%/*}/audit"); fi
     ;;
   *) exit 2 ;;
 esac

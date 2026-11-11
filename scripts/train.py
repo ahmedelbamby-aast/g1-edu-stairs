@@ -27,6 +27,7 @@ class TrainConfig:
   motion_file: str | None = None
   resume_checkpoint: str | None = None
   init_actor_onnx: str | None = None
+  randomize_initial_episode_length: bool = True
   video: bool = False
   video_length: int = 200
   video_interval: int = 2000
@@ -132,7 +133,7 @@ def run_train(task_id: str, cfg: TrainConfig, log_dir: Path) -> None:
   runner.add_git_repo_to_log(__file__)
   if resume_path is not None:
     print(f"[INFO]: Loading model checkpoint from: {resume_path}")
-    runner.load(str(resume_path))
+    runner.load(str(resume_path), map_location=device)
   if cfg.init_actor_onnx is not None:
     path = Path(cfg.init_actor_onnx).expanduser().resolve(strict=True)
     initialize_actor = getattr(runner, "initialize_actor", None)
@@ -147,8 +148,13 @@ def run_train(task_id: str, cfg: TrainConfig, log_dir: Path) -> None:
     dump_yaml(log_dir / "params" / "env.yaml", env_cfg)
     dump_yaml(log_dir / "params" / "agent.yaml", agent_cfg)
 
+  write_run_audit = getattr(runner, "write_run_audit", None)
+  if write_run_audit is not None:
+    write_run_audit(log_dir, rank)
+
   runner.learn(
-    num_learning_iterations=cfg.agent.max_iterations, init_at_random_ep_len=True
+    num_learning_iterations=cfg.agent.max_iterations,
+    init_at_random_ep_len=cfg.randomize_initial_episode_length,
   )
 
   env.close()

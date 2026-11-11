@@ -17,6 +17,9 @@ PRIOR_SAMPLES = 262_144
 
 
 class StairsOnPolicyRunner(VelocityOnPolicyRunner):
+  observation_layout = (*OBSERVATION_PREFIX, "height_scan")
+  teacher_layouts = (OBSERVATION_PREFIX,)
+
   def save(self, path: str, infos=None) -> None:
     # Only expose checkpoint files after the write and matching export finish.
     destination = Path(path)
@@ -32,10 +35,13 @@ class StairsOnPolicyRunner(VelocityOnPolicyRunner):
     model = onnx.load(path)
     source = {entry.key: entry.value for entry in model.metadata_props}
     current = get_base_metadata(self.env.unwrapped, "stairs")
-    if tuple(source["observation_names"].split(",")) != OBSERVATION_PREFIX:
-      raise ValueError("The source ONNX file must use Unitree's flat G1 observations")
-    if tuple(current["observation_names"]) != (*OBSERVATION_PREFIX, "height_scan"):
-      raise ValueError("The stair actor's observation layout is incompatible with the flat policy")
+    source_layout = tuple(source["observation_names"].split(","))
+    if source_layout not in self.teacher_layouts:
+      raise ValueError("The source ONNX observation layout is not supported by this task")
+    if tuple(current["observation_names"]) != self.observation_layout:
+      raise ValueError("The task's observation layout changed")
+    if self.observation_layout[:len(source_layout)] != source_layout:
+      raise ValueError("The teacher's observations must match the beginning of the task's inputs")
     if source["joint_names"].split(",") != current["joint_names"]:
       raise ValueError("The source ONNX file uses a different joint order")
     for key in ("action_scale", "default_joint_pos", "joint_stiffness", "joint_damping"):
@@ -48,7 +54,7 @@ class StairsOnPolicyRunner(VelocityOnPolicyRunner):
     actor = self.alg.get_policy()
     state = actor.state_dict()
     source_mean = arrays["obs_normalizer._mean"]
-    prefix_size = 11 + 3 * self.env.num_actions
+    prefix_size = 11 + 3 * self.env.num_actions + (63 if "height_scan" in source_layout else 0)
     if source_mean.shape != (1, prefix_size):
       raise ValueError("Unexpected Unitree flat actor input size")
 
