@@ -307,6 +307,31 @@ def balance_checks(env):
     env.reset()
 
 
+def checkpoint_checks(runner, directory):
+  """Round-trip curriculum evidence through the real checkpoint entry points."""
+  state = skill(runner.env.unwrapped)
+  names = ("frontier", "result_success", "result_trials", "result_cursor")
+  original = {name: getattr(state, name).clone() for name in names}
+  directory.mkdir(parents=True, exist_ok=True)
+  try:
+    state.frontier[0] = 2
+    state.result_success[0, 0] = 3
+    state.result_trials[0, 0] = 4
+    state.result_cursor[0] = 5
+    expected = {name: getattr(state, name).clone() for name in names}
+    runner.save(str(directory / "model_smoke.pt"), {"smoke_only": True, "optimizer_steps": 0})
+    for name in names:
+      getattr(state, name).zero_()
+    runner.load(str(directory / "model_smoke.pt"))
+    for name, value in expected.items():
+      if not torch.equal(getattr(state, name), value):
+        raise AssertionError(f"Checkpoint did not restore {name}")
+  finally:
+    for name, value in original.items():
+      getattr(state, name).copy_(value)
+  return "passed"
+
+
 def main():
   parser = argparse.ArgumentParser(description=__doc__)
   parser.add_argument("--output", type=Path, required=True)
@@ -399,6 +424,8 @@ def main():
         with torch.no_grad():
           report["onnx_error"] = check_onnx(args.output / task / "smoke-only.onnx",
                                              observation["actor"], policy(observation))
+        report["curriculum_checkpoint_restore"] = checkpoint_checks(
+          runner, args.output / task / "checkpoint-check")
       if student:
         teachers = ExpertPolicies([args.teacher_checkpoint] * 3, observation,
                                    asdict(mastery_runner_cfg().actor), args.device)
