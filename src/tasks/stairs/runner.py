@@ -17,6 +17,13 @@ PRIOR_SAMPLES = 262_144
 
 
 class StairsOnPolicyRunner(VelocityOnPolicyRunner):
+  def save(self, path: str, infos=None) -> None:
+    # Only expose checkpoint files after the write and matching export finish.
+    destination = Path(path)
+    temporary = destination.with_suffix(".pt.tmp")
+    super().save(str(temporary), infos)
+    temporary.replace(destination)
+
   @torch.no_grad()
   def initialize_actor(self, path: Path) -> dict[str, str | float | int]:
     import onnx

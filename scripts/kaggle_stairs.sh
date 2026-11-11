@@ -6,19 +6,29 @@ repo="$PWD"
 scratch="${STAIRS_SCRATCH:-/codex_download_here_work_here}"
 results="${STAIRS_RESULTS:-/kaggle/working/g1-edu-stairs}"
 export UV_CACHE_DIR="$scratch/uv-cache"
+export UV_PYTHON_INSTALL_DIR="$scratch/uv-python"
+export PATH="$scratch/bin:$PATH"
 export TMPDIR="$scratch/tmp"
 export XDG_CACHE_HOME="$scratch/cache"
 export WARP_CACHE_PATH="$XDG_CACHE_HOME/warp"
 export LD_LIBRARY_PATH="/usr/local/nvidia/lib64${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}"
-export MUJOCO_GL=egl
+export MUJOCO_GL="${MUJOCO_GL:-egl}"
 export PYTHONUNBUFFERED=1
 export PYTHONPATH="$repo${PYTHONPATH:+:$PYTHONPATH}"
 mkdir -p "$TMPDIR" "$WARP_CACHE_PATH"
 
 mode="${1:-}"
 if [[ "$mode" == install ]]; then
-  uv venv --allow-existing --python "${STAIRS_PYTHON:-/usr/bin/python3.12}"
-  uv pip install --torch-backend=cu128 -r experiments/requirements-kaggle.txt -e .
+  python="${STAIRS_PYTHON:-3.12}"
+  if [[ -z "${STAIRS_PYTHON:-}" && -x /usr/bin/python3.12 ]]; then
+    python=/usr/bin/python3.12
+  fi
+  uv venv --allow-existing --python "$python"
+  requirements=experiments/requirements-kaggle.txt
+  if [[ -f experiments/requirements-kaggle.lock.txt ]]; then
+    requirements=experiments/requirements-kaggle.lock.txt
+  fi
+  uv pip install --torch-backend=cu128 -r "$requirements" -e .
   uv pip check
   exit
 fi
@@ -29,8 +39,15 @@ if [[ "$mode" == evaluate ]]; then
   exec .venv/bin/python -m scripts.evaluate_stairs "$@"
 fi
 
+if [[ "$mode" == render ]]; then
+  shift
+  export MUJOCO_GL="${STAIRS_RENDER_GL:-osmesa}"
+  export OMP_NUM_THREADS=2 MKL_NUM_THREADS=2 OPENBLAS_NUM_THREADS=2
+  exec .venv/bin/python -m scripts.render_stairs "$@"
+fi
+
 if [[ "$mode" != train && "$mode" != smoke && "$mode" != benchmark ]]; then
-  echo "Usage: bash scripts/kaggle_stairs.sh install | {smoke,benchmark,train} RUN_ID [training flags] | evaluate [evaluation flags]" >&2
+  echo "Usage: bash scripts/kaggle_stairs.sh install | {smoke,benchmark,train} RUN_ID [flags] | {evaluate,render} [flags]" >&2
   exit 2
 fi
 run_id="${2:-}"
