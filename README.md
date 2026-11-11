@@ -7,6 +7,8 @@ for startup and backups, and the [experiment index](experiments/README.md) for r
 
 The [campus stairs curriculum](doc/campus-sim2real.md) adds single-leg balance,
 contact-based step phases, six campus stair families, and simulation acceptance tests.
+The [round-trip task](doc/round-trip-stairs.md) adds a turn on the upper landing,
+descent on the same flight, and three pace and tread-depth bands.
 
 
 ## ✳️ Overview
