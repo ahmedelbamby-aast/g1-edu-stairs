@@ -42,6 +42,8 @@ def main():
   agent = mastery_runner_cfg()
   dump_yaml(args.output / "env.yaml", asdict(cfg))
   dump_yaml(args.output / "agent.yaml", asdict(agent))
+  torch.cuda.set_device(args.device)
+  torch.empty(1, device=args.device)  # Initialize this device before allocator statistics.
   torch.cuda.reset_peak_memory_stats(args.device)
   env = ManagerBasedRlEnv(cfg, device=args.device)
   try:

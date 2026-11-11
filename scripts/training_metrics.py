@@ -218,6 +218,7 @@ def export_run(run, output=None):
   write_csv(output / "scalars.csv", rows)
   summary["plots"] = plot(rows, output / "plots", f'{summary["data_kind"]}: {run.name}')
   atomic_json(output / "summary.json", summary)
+  print(f'Exported {run.name}: {summary["points"]} measurements, {summary["plots"]} plots', flush=True)
   return summary
 
 
@@ -239,6 +240,7 @@ def compare(runs, output):
   write_csv(output / "experiment-time.csv", experiment_rows)
   plot(experiment_rows, output / "experiment-plots", "Elapsed experiment time (all segments)")
   atomic_json(output / "comparison.json", {"runs": summaries, "plots": count})
+  print(f"Compared {len(summaries)} runs: {count} metrics", flush=True)
 
 
 def update_catalog(root):
