@@ -3,6 +3,7 @@
 import argparse
 import hashlib
 import json
+import subprocess
 from dataclasses import asdict
 from pathlib import Path
 
@@ -10,6 +11,7 @@ import torch
 from mjlab.envs import ManagerBasedRlEnv
 from mjlab.rl import MjlabOnPolicyRunner, RslRlVecEnvWrapper
 from mjlab.utils.torch import configure_torch_backends
+from mjlab.utils.os import dump_yaml
 
 from scripts.evaluate_stairs import check_onnx
 from src.tasks.campus import TASK_ID, campus_env_cfg, campus_runner_cfg
@@ -37,6 +39,8 @@ def evaluate(args):
   command.fixed_level = None
   command.promote_after = command.demote_after = 10_000
   agent = campus_runner_cfg()
+  dump_yaml(args.output.with_suffix(".env.yaml"), asdict(cfg))
+  dump_yaml(args.output.with_suffix(".agent.yaml"), asdict(agent))
   env = ManagerBasedRlEnv(cfg, device=args.device)
   try:
     state = skill(env)
@@ -101,6 +105,8 @@ def evaluate(args):
       })
     return {
       "task": TASK_ID, "suite": args.suite, "seed": args.seed, "terrain_seed": args.terrain_seed,
+      "source_commit": subprocess.check_output(["git", "rev-parse", "HEAD"], text=True).strip(),
+      "device": args.device,
       "checkpoint": args.checkpoint.name,
       "checkpoint_sha256": hashlib.sha256(args.checkpoint.read_bytes()).hexdigest(),
       "onnx_max_abs_error": parity, "minimum_completion_fraction": args.min_success,
@@ -127,8 +133,8 @@ def main():
   args = parser.parse_args()
   if args.episodes_per_cell < 1 or not 0 <= args.min_success <= 1 or not 0 <= args.max_falls <= 1:
     parser.error("Use positive episode counts and gate fractions between zero and one")
-  result = evaluate(args)
   args.output.parent.mkdir(parents=True, exist_ok=True)
+  result = evaluate(args)
   args.output.write_text(json.dumps(result, indent=2) + "\n", encoding="utf-8")
   print(f"Saved {len(result['cells'])} cells to {args.output}")
   if args.require_pass and not result["all_cells_pass_sim_gate"]:

@@ -68,6 +68,8 @@ The [campus profile](../experiments/profiles/kaggle-campus.env) starts at 1,200 
 
 Run the evaluator twice with `--suite clean` and `--suite stress`. It uses held-out terrain and reports each balance leg, each isolated step, and each full flight at every level. By default, each of the 156 cells gets 16 episodes. The simulation gate requires at least 95% completion and no falls per cell. Add `--require-pass` when a failed gate should return a nonzero exit code.
 
+On the two-T4 Kaggle machine, `bash scripts/evaluate_kaggle_campus.sh campus-001` runs both suites against the final checkpoint and saves both resolved evaluation configurations.
+
 ```bash
 bash scripts/kaggle_stairs.sh evaluate-campus --suite stress \
   --checkpoint /absolute/path/to/model_N.pt --onnx /absolute/path/to/policy.onnx \
