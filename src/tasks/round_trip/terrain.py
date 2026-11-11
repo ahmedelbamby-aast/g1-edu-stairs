@@ -7,7 +7,7 @@ from mjlab.terrains.terrain_generator import TerrainGeneratorCfg
 
 from src.tasks.campus.terrain import CampusTileCfg, DESIGNS, DIFFICULTIES, INCH
 
-DEPTHS = {"short": (.25, .29), "medium": (.305, .35), "long": (.38, .44)}
+DEPTHS = {"short": (.25, .28), "medium": (.31, .35), "long": (.38, .44)}
 PACE_BANDS = {"slow": (.20, .30), "normal": (.38, .48), "fast": (.57, .70)}
 TURN_DEPTHS = (1.68, 1.57, 1.46, 1.36, 1.28, 1.22)
 TREAD_EXTRA = (.060, .045, .030, .015, 0., 0.)

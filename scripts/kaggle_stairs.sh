@@ -33,11 +33,12 @@ if [[ "$mode" == install ]]; then
   exit
 fi
 
-if [[ "$mode" == evaluate || "$mode" == evaluate-campus ]]; then
+if [[ "$mode" == evaluate || "$mode" == evaluate-campus || "$mode" == evaluate-round-trip ]]; then
   shift
   export OMP_NUM_THREADS=2 MKL_NUM_THREADS=2 OPENBLAS_NUM_THREADS=2
   module=scripts.evaluate_stairs
   if [[ "$mode" == evaluate-campus ]]; then module=scripts.evaluate_campus; fi
+  if [[ "$mode" == evaluate-round-trip ]]; then module=scripts.evaluate_round_trip; fi
   exec .venv/bin/python -m "$module" "$@"
 fi
 
@@ -50,7 +51,7 @@ if [[ "$mode" == render ]]; then
 fi
 
 if [[ "$mode" != train && "$mode" != smoke && "$mode" != benchmark ]]; then
-  echo "Usage: bash scripts/kaggle_stairs.sh install | {smoke,benchmark,train} RUN_ID [flags] | {evaluate,evaluate-campus,render} [flags]" >&2
+  echo "Usage: bash scripts/kaggle_stairs.sh install | {smoke,benchmark,train} RUN_ID [flags] | {evaluate,evaluate-campus,evaluate-round-trip,render} [flags]" >&2
   exit 2
 fi
 run_id="${2:-}"
