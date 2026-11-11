@@ -1,0 +1,1959 @@
+{
+  "seed": 41,
+  "column_seeds": [
+    41,
+    41,
+    41,
+    41,
+    41,
+    41,
+    41,
+    41,
+    41,
+    41,
+    41,
+    41
+  ],
+  "designs": [
+    {
+      "name": "georgia_tech_plaza",
+      "riser_in": 5,
+      "tread_in": 15,
+      "source": "https://facilities.gatech.edu/system/files/forms_files/greenbookfinal-20200810.pdf",
+      "split_landing": false
+    },
+    {
+      "name": "lsu_entry",
+      "riser_in": 6,
+      "tread_in": 14,
+      "source": "https://www.lsu.edu/pdc/files/lsu_site_and_landscape_standards.pdf",
+      "split_landing": false
+    },
+    {
+      "name": "wyoming_concrete",
+      "riser_in": 6,
+      "tread_in": 12,
+      "source": "https://www.uwyo.edu/uwops/_files/construction_standards_guidelines/design-guidelines-march-2023.pdf",
+      "split_landing": false
+    },
+    {
+      "name": "virginia_tech_exterior",
+      "riser_in": 7,
+      "tread_in": 12,
+      "source": "https://www.facilities.vt.edu/content/dam/facilities_vt_edu/design-and-construction-standards/vt-design-and-construction-standards-manual-2021.pdf",
+      "split_landing": false
+    },
+    {
+      "name": "uconn_exterior",
+      "riser_in": 7,
+      "tread_in": 15,
+      "source": "https://updc.media.uconn.edu/wp-content/uploads/sites/1525/2025/10/Volume-One-DESIGN-GUIDELINES-September-2025.pdf",
+      "split_landing": false
+    },
+    {
+      "name": "virginia_tech_split",
+      "riser_in": 7,
+      "tread_in": 12,
+      "source": "https://www.facilities.vt.edu/content/dam/facilities_vt_edu/design-and-construction-standards/vt-design-and-construction-standards-manual-2021.pdf",
+      "split_landing": true
+    }
+  ],
+  "courses": [
+    {
+      "course": "georgia_tech_plaza_up",
+      "level": 0,
+      "settings": {
+        "risers": 1,
+        "rise_scale": 0.3,
+        "added_tread_m": 0.15,
+        "width_m": 2.15,
+        "hold_s": 0.3,
+        "lift_m": 0.045,
+        "push_mps": 0.0,
+        "scan_dropout": 0.0
+      },
+      "edge_x_m_from_tile_start": [
+        1.4908735992665805
+      ],
+      "surface_z_m": [
+        0.0,
+        0.0381
+      ]
+    },
+    {
+      "course": "georgia_tech_plaza_down",
+      "level": 0,
+      "settings": {
+        "risers": 1,
+        "rise_scale": 0.3,
+        "added_tread_m": 0.15,
+        "width_m": 2.15,
+        "hold_s": 0.3,
+        "lift_m": 0.045,
+        "push_mps": 0.0,
+        "scan_dropout": 0.0
+      },
+      "edge_x_m_from_tile_start": [
+        1.481477635177257
+      ],
+      "surface_z_m": [
+        0.0381,
+        0.0
+      ]
+    },
+    {
+      "course": "lsu_entry_up",
+      "level": 0,
+      "settings": {
+        "risers": 1,
+        "rise_scale": 0.3,
+        "added_tread_m": 0.15,
+        "width_m": 2.15,
+        "hold_s": 0.3,
+        "lift_m": 0.045,
+        "push_mps": 0.0,
+        "scan_dropout": 0.0
+      },
+      "edge_x_m_from_tile_start": [
+        1.4719918279863689
+      ],
+      "surface_z_m": [
+        0.0,
+        0.04571999999999999
+      ]
+    },
+    {
+      "course": "lsu_entry_down",
+      "level": 0,
+      "settings": {
+        "risers": 1,
+        "rise_scale": 0.3,
+        "added_tread_m": 0.15,
+        "width_m": 2.15,
+        "hold_s": 0.3,
+        "lift_m": 0.045,
+        "push_mps": 0.0,
+        "scan_dropout": 0.0
+      },
+      "edge_x_m_from_tile_start": [
+        1.486704499776031
+      ],
+      "surface_z_m": [
+        0.04571999999999999,
+        0.0
+      ]
+    },
+    {
+      "course": "wyoming_concrete_up",
+      "level": 0,
+      "settings": {
+        "risers": 1,
+        "rise_scale": 0.3,
+        "added_tread_m": 0.15,
+        "width_m": 2.15,
+        "hold_s": 0.3,
+        "lift_m": 0.045,
+        "push_mps": 0.0,
+        "scan_dropout": 0.0
+      },
+      "edge_x_m_from_tile_start": [
+        1.4871758179537615
+      ],
+      "surface_z_m": [
+        0.0,
+        0.04571999999999999
+      ]
+    },
+    {
+      "course": "wyoming_concrete_down",
+      "level": 0,
+      "settings": {
+        "risers": 1,
+        "rise_scale": 0.3,
+        "added_tread_m": 0.15,
+        "width_m": 2.15,
+        "hold_s": 0.3,
+        "lift_m": 0.045,
+        "push_mps": 0.0,
+        "scan_dropout": 0.0
+      },
+      "edge_x_m_from_tile_start": [
+        1.4481670157009026
+      ],
+      "surface_z_m": [
+        0.04571999999999999,
+        0.0
+      ]
+    },
+    {
+      "course": "virginia_tech_exterior_up",
+      "level": 0,
+      "settings": {
+        "risers": 1,
+        "rise_scale": 0.3,
+        "added_tread_m": 0.15,
+        "width_m": 2.15,
+        "hold_s": 0.3,
+        "lift_m": 0.045,
+        "push_mps": 0.0,
+        "scan_dropout": 0.0
+      },
+      "edge_x_m_from_tile_start": [
+        1.4138672333637683
+      ],
+      "surface_z_m": [
+        0.0,
+        0.05333999999999999
+      ]
+    },
+    {
+      "course": "virginia_tech_exterior_down",
+      "level": 0,
+      "settings": {
+        "risers": 1,
+        "rise_scale": 0.3,
+        "added_tread_m": 0.15,
+        "width_m": 2.15,
+        "hold_s": 0.3,
+        "lift_m": 0.045,
+        "push_mps": 0.0,
+        "scan_dropout": 0.0
+      },
+      "edge_x_m_from_tile_start": [
+        1.4800661266639084
+      ],
+      "surface_z_m": [
+        0.05333999999999999,
+        0.0
+      ]
+    },
+    {
+      "course": "uconn_exterior_up",
+      "level": 0,
+      "settings": {
+        "risers": 1,
+        "rise_scale": 0.3,
+        "added_tread_m": 0.15,
+        "width_m": 2.15,
+        "hold_s": 0.3,
+        "lift_m": 0.045,
+        "push_mps": 0.0,
+        "scan_dropout": 0.0
+      },
+      "edge_x_m_from_tile_start": [
+        1.475579081068721
+      ],
+      "surface_z_m": [
+        0.0,
+        0.05333999999999999
+      ]
+    },
+    {
+      "course": "uconn_exterior_down",
+      "level": 0,
+      "settings": {
+        "risers": 1,
+        "rise_scale": 0.3,
+        "added_tread_m": 0.15,
+        "width_m": 2.15,
+        "hold_s": 0.3,
+        "lift_m": 0.045,
+        "push_mps": 0.0,
+        "scan_dropout": 0.0
+      },
+      "edge_x_m_from_tile_start": [
+        1.4539424382889257
+      ],
+      "surface_z_m": [
+        0.05333999999999999,
+        0.0
+      ]
+    },
+    {
+      "course": "virginia_tech_split_up",
+      "level": 0,
+      "settings": {
+        "risers": 1,
+        "rise_scale": 0.3,
+        "added_tread_m": 0.15,
+        "width_m": 2.15,
+        "hold_s": 0.3,
+        "lift_m": 0.045,
+        "push_mps": 0.0,
+        "scan_dropout": 0.0
+      },
+      "edge_x_m_from_tile_start": [
+        1.4516150267248387
+      ],
+      "surface_z_m": [
+        0.0,
+        0.05333999999999999
+      ]
+    },
+    {
+      "course": "virginia_tech_split_down",
+      "level": 0,
+      "settings": {
+        "risers": 1,
+        "rise_scale": 0.3,
+        "added_tread_m": 0.15,
+        "width_m": 2.15,
+        "hold_s": 0.3,
+        "lift_m": 0.045,
+        "push_mps": 0.0,
+        "scan_dropout": 0.0
+      },
+      "edge_x_m_from_tile_start": [
+        1.4649532648599257
+      ],
+      "surface_z_m": [
+        0.05333999999999999,
+        0.0
+      ]
+    },
+    {
+      "course": "georgia_tech_plaza_up",
+      "level": 1,
+      "settings": {
+        "risers": 2,
+        "rise_scale": 0.5,
+        "added_tread_m": 0.11,
+        "width_m": 2.0,
+        "hold_s": 0.55,
+        "lift_m": 0.06,
+        "push_mps": 0.04,
+        "scan_dropout": 0.01
+      },
+      "edge_x_m_from_tile_start": [
+        1.4614142867383992,
+        1.9524142867383993
+      ],
+      "surface_z_m": [
+        0.0,
+        0.0635,
+        0.127
+      ]
+    },
+    {
+      "course": "georgia_tech_plaza_down",
+      "level": 1,
+      "settings": {
+        "risers": 2,
+        "rise_scale": 0.5,
+        "added_tread_m": 0.11,
+        "width_m": 2.0,
+        "hold_s": 0.55,
+        "lift_m": 0.06,
+        "push_mps": 0.04,
+        "scan_dropout": 0.01
+      },
+      "edge_x_m_from_tile_start": [
+        1.466381850635837,
+        1.9573818506358371
+      ],
+      "surface_z_m": [
+        0.127,
+        0.0635,
+        0.0
+      ]
+    },
+    {
+      "course": "lsu_entry_up",
+      "level": 1,
+      "settings": {
+        "risers": 2,
+        "rise_scale": 0.5,
+        "added_tread_m": 0.11,
+        "width_m": 2.0,
+        "hold_s": 0.55,
+        "lift_m": 0.06,
+        "push_mps": 0.04,
+        "scan_dropout": 0.01
+      },
+      "edge_x_m_from_tile_start": [
+        1.417033068791611,
+        1.882633068791611
+      ],
+      "surface_z_m": [
+        0.0,
+        0.07619999999999999,
+        0.15239999999999998
+      ]
+    },
+    {
+      "course": "lsu_entry_down",
+      "level": 1,
+      "settings": {
+        "risers": 2,
+        "rise_scale": 0.5,
+        "added_tread_m": 0.11,
+        "width_m": 2.0,
+        "hold_s": 0.55,
+        "lift_m": 0.06,
+        "push_mps": 0.04,
+        "scan_dropout": 0.01
+      },
+      "edge_x_m_from_tile_start": [
+        1.4782757500895567,
+        1.9438757500895567
+      ],
+      "surface_z_m": [
+        0.15239999999999998,
+        0.07619999999999999,
+        0.0
+      ]
+    },
+    {
+      "course": "wyoming_concrete_up",
+      "level": 1,
+      "settings": {
+        "risers": 2,
+        "rise_scale": 0.5,
+        "added_tread_m": 0.11,
+        "width_m": 2.0,
+        "hold_s": 0.55,
+        "lift_m": 0.06,
+        "push_mps": 0.04,
+        "scan_dropout": 0.01
+      },
+      "edge_x_m_from_tile_start": [
+        1.451904225888698,
+        1.8667042258886979
+      ],
+      "surface_z_m": [
+        0.0,
+        0.07619999999999999,
+        0.15239999999999998
+      ]
+    },
+    {
+      "course": "wyoming_concrete_down",
+      "level": 1,
+      "settings": {
+        "risers": 2,
+        "rise_scale": 0.5,
+        "added_tread_m": 0.11,
+        "width_m": 2.0,
+        "hold_s": 0.55,
+        "lift_m": 0.06,
+        "push_mps": 0.04,
+        "scan_dropout": 0.01
+      },
+      "edge_x_m_from_tile_start": [
+        1.432023732079245,
+        1.8468237320792449
+      ],
+      "surface_z_m": [
+        0.15239999999999998,
+        0.07619999999999999,
+        0.0
+      ]
+    },
+    {
+      "course": "virginia_tech_exterior_up",
+      "level": 1,
+      "settings": {
+        "risers": 2,
+        "rise_scale": 0.5,
+        "added_tread_m": 0.11,
+        "width_m": 2.0,
+        "hold_s": 0.55,
+        "lift_m": 0.06,
+        "push_mps": 0.04,
+        "scan_dropout": 0.01
+      },
+      "edge_x_m_from_tile_start": [
+        1.4409804213291504,
+        1.8557804213291504
+      ],
+      "surface_z_m": [
+        0.0,
+        0.08889999999999999,
+        0.17779999999999999
+      ]
+    },
+    {
+      "course": "virginia_tech_exterior_down",
+      "level": 1,
+      "settings": {
+        "risers": 2,
+        "rise_scale": 0.5,
+        "added_tread_m": 0.11,
+        "width_m": 2.0,
+        "hold_s": 0.55,
+        "lift_m": 0.06,
+        "push_mps": 0.04,
+        "scan_dropout": 0.01
+      },
+      "edge_x_m_from_tile_start": [
+        1.432294998794012,
+        1.8470949987940117
+      ],
+      "surface_z_m": [
+        0.17779999999999999,
+        0.08889999999999999,
+        0.0
+      ]
+    },
+    {
+      "course": "uconn_exterior_up",
+      "level": 1,
+      "settings": {
+        "risers": 2,
+        "rise_scale": 0.5,
+        "added_tread_m": 0.11,
+        "width_m": 2.0,
+        "hold_s": 0.55,
+        "lift_m": 0.06,
+        "push_mps": 0.04,
+        "scan_dropout": 0.01
+      },
+      "edge_x_m_from_tile_start": [
+        1.4051537295757868,
+        1.8961537295757869
+      ],
+      "surface_z_m": [
+        0.0,
+        0.08889999999999999,
+        0.17779999999999999
+      ]
+    },
+    {
+      "course": "uconn_exterior_down",
+      "level": 1,
+      "settings": {
+        "risers": 2,
+        "rise_scale": 0.5,
+        "added_tread_m": 0.11,
+        "width_m": 2.0,
+        "hold_s": 0.55,
+        "lift_m": 0.06,
+        "push_mps": 0.04,
+        "scan_dropout": 0.01
+      },
+      "edge_x_m_from_tile_start": [
+        1.445300283306866,
+        1.936300283306866
+      ],
+      "surface_z_m": [
+        0.17779999999999999,
+        0.08889999999999999,
+        0.0
+      ]
+    },
+    {
+      "course": "virginia_tech_split_up",
+      "level": 1,
+      "settings": {
+        "risers": 2,
+        "rise_scale": 0.5,
+        "added_tread_m": 0.11,
+        "width_m": 2.0,
+        "hold_s": 0.55,
+        "lift_m": 0.06,
+        "push_mps": 0.04,
+        "scan_dropout": 0.01
+      },
+      "edge_x_m_from_tile_start": [
+        1.4825034238582495,
+        2.89730342385825
+      ],
+      "surface_z_m": [
+        0.0,
+        0.08889999999999999,
+        0.17779999999999999
+      ]
+    },
+    {
+      "course": "virginia_tech_split_down",
+      "level": 1,
+      "settings": {
+        "risers": 2,
+        "rise_scale": 0.5,
+        "added_tread_m": 0.11,
+        "width_m": 2.0,
+        "hold_s": 0.55,
+        "lift_m": 0.06,
+        "push_mps": 0.04,
+        "scan_dropout": 0.01
+      },
+      "edge_x_m_from_tile_start": [
+        1.4800767170443285,
+        2.894876717044329
+      ],
+      "surface_z_m": [
+        0.17779999999999999,
+        0.08889999999999999,
+        0.0
+      ]
+    },
+    {
+      "course": "georgia_tech_plaza_up",
+      "level": 2,
+      "settings": {
+        "risers": 3,
+        "rise_scale": 0.72,
+        "added_tread_m": 0.07,
+        "width_m": 1.85,
+        "hold_s": 0.85,
+        "lift_m": 0.075,
+        "push_mps": 0.08,
+        "scan_dropout": 0.02
+      },
+      "edge_x_m_from_tile_start": [
+        1.4512768135387648,
+        1.9022768135387649,
+        2.353276813538765
+      ],
+      "surface_z_m": [
+        0.0,
+        0.09144,
+        0.18288,
+        0.27432
+      ]
+    },
+    {
+      "course": "georgia_tech_plaza_down",
+      "level": 2,
+      "settings": {
+        "risers": 3,
+        "rise_scale": 0.72,
+        "added_tread_m": 0.07,
+        "width_m": 1.85,
+        "hold_s": 0.85,
+        "lift_m": 0.075,
+        "push_mps": 0.08,
+        "scan_dropout": 0.02
+      },
+      "edge_x_m_from_tile_start": [
+        1.4409869641496447,
+        1.8919869641496447,
+        2.342986964149645
+      ],
+      "surface_z_m": [
+        0.27432,
+        0.18288,
+        0.09144,
+        0.0
+      ]
+    },
+    {
+      "course": "lsu_entry_up",
+      "level": 2,
+      "settings": {
+        "risers": 3,
+        "rise_scale": 0.72,
+        "added_tread_m": 0.07,
+        "width_m": 1.85,
+        "hold_s": 0.85,
+        "lift_m": 0.075,
+        "push_mps": 0.08,
+        "scan_dropout": 0.02
+      },
+      "edge_x_m_from_tile_start": [
+        1.4521493216578205,
+        1.8777493216578205,
+        2.3033493216578202
+      ],
+      "surface_z_m": [
+        0.0,
+        0.10972799999999998,
+        0.21945599999999996,
+        0.3291839999999999
+      ]
+    },
+    {
+      "course": "lsu_entry_down",
+      "level": 2,
+      "settings": {
+        "risers": 3,
+        "rise_scale": 0.72,
+        "added_tread_m": 0.07,
+        "width_m": 1.85,
+        "hold_s": 0.85,
+        "lift_m": 0.075,
+        "push_mps": 0.08,
+        "scan_dropout": 0.02
+      },
+      "edge_x_m_from_tile_start": [
+        1.4425984066039799,
+        1.8681984066039798,
+        2.2937984066039796
+      ],
+      "surface_z_m": [
+        0.3291839999999999,
+        0.21945599999999996,
+        0.10972799999999998,
+        0.0
+      ]
+    },
+    {
+      "course": "wyoming_concrete_up",
+      "level": 2,
+      "settings": {
+        "risers": 3,
+        "rise_scale": 0.72,
+        "added_tread_m": 0.07,
+        "width_m": 1.85,
+        "hold_s": 0.85,
+        "lift_m": 0.075,
+        "push_mps": 0.08,
+        "scan_dropout": 0.02
+      },
+      "edge_x_m_from_tile_start": [
+        1.4946464126555927,
+        1.8694464126555927,
+        2.2442464126555928
+      ],
+      "surface_z_m": [
+        0.0,
+        0.10972799999999998,
+        0.21945599999999996,
+        0.3291839999999999
+      ]
+    },
+    {
+      "course": "wyoming_concrete_down",
+      "level": 2,
+      "settings": {
+        "risers": 3,
+        "rise_scale": 0.72,
+        "added_tread_m": 0.07,
+        "width_m": 1.85,
+        "hold_s": 0.85,
+        "lift_m": 0.075,
+        "push_mps": 0.08,
+        "scan_dropout": 0.02
+      },
+      "edge_x_m_from_tile_start": [
+        1.4158966097772934,
+        1.7906966097772934,
+        2.165496609777293
+      ],
+      "surface_z_m": [
+        0.3291839999999999,
+        0.21945599999999996,
+        0.10972799999999998,
+        0.0
+      ]
+    },
+    {
+      "course": "virginia_tech_exterior_up",
+      "level": 2,
+      "settings": {
+        "risers": 3,
+        "rise_scale": 0.72,
+        "added_tread_m": 0.07,
+        "width_m": 1.85,
+        "hold_s": 0.85,
+        "lift_m": 0.075,
+        "push_mps": 0.08,
+        "scan_dropout": 0.02
+      },
+      "edge_x_m_from_tile_start": [
+        1.4403970619349458,
+        1.8151970619349458,
+        2.1899970619349456
+      ],
+      "surface_z_m": [
+        0.0,
+        0.128016,
+        0.256032,
+        0.38404799999999994
+      ]
+    },
+    {
+      "course": "virginia_tech_exterior_down",
+      "level": 2,
+      "settings": {
+        "risers": 3,
+        "rise_scale": 0.72,
+        "added_tread_m": 0.07,
+        "width_m": 1.85,
+        "hold_s": 0.85,
+        "lift_m": 0.075,
+        "push_mps": 0.08,
+        "scan_dropout": 0.02
+      },
+      "edge_x_m_from_tile_start": [
+        1.472262755975075,
+        1.847062755975075,
+        2.2218627559750748
+      ],
+      "surface_z_m": [
+        0.38404799999999994,
+        0.256032,
+        0.128016,
+        0.0
+      ]
+    },
+    {
+      "course": "uconn_exterior_up",
+      "level": 2,
+      "settings": {
+        "risers": 3,
+        "rise_scale": 0.72,
+        "added_tread_m": 0.07,
+        "width_m": 1.85,
+        "hold_s": 0.85,
+        "lift_m": 0.075,
+        "push_mps": 0.08,
+        "scan_dropout": 0.02
+      },
+      "edge_x_m_from_tile_start": [
+        1.4071705381465294,
+        1.8581705381465294,
+        2.3091705381465295
+      ],
+      "surface_z_m": [
+        0.0,
+        0.128016,
+        0.256032,
+        0.38404799999999994
+      ]
+    },
+    {
+      "course": "uconn_exterior_down",
+      "level": 2,
+      "settings": {
+        "risers": 3,
+        "rise_scale": 0.72,
+        "added_tread_m": 0.07,
+        "width_m": 1.85,
+        "hold_s": 0.85,
+        "lift_m": 0.075,
+        "push_mps": 0.08,
+        "scan_dropout": 0.02
+      },
+      "edge_x_m_from_tile_start": [
+        1.4128681226840059,
+        1.863868122684006,
+        2.3148681226840058
+      ],
+      "surface_z_m": [
+        0.38404799999999994,
+        0.256032,
+        0.128016,
+        0.0
+      ]
+    },
+    {
+      "course": "virginia_tech_split_up",
+      "level": 2,
+      "settings": {
+        "risers": 3,
+        "rise_scale": 0.72,
+        "added_tread_m": 0.07,
+        "width_m": 1.85,
+        "hold_s": 0.85,
+        "lift_m": 0.075,
+        "push_mps": 0.08,
+        "scan_dropout": 0.02
+      },
+      "edge_x_m_from_tile_start": [
+        1.4328418234924214,
+        1.8076418234924214,
+        3.1824418234924217
+      ],
+      "surface_z_m": [
+        0.0,
+        0.128016,
+        0.256032,
+        0.38404799999999994
+      ]
+    },
+    {
+      "course": "virginia_tech_split_down",
+      "level": 2,
+      "settings": {
+        "risers": 3,
+        "rise_scale": 0.72,
+        "added_tread_m": 0.07,
+        "width_m": 1.85,
+        "hold_s": 0.85,
+        "lift_m": 0.075,
+        "push_mps": 0.08,
+        "scan_dropout": 0.02
+      },
+      "edge_x_m_from_tile_start": [
+        1.4825726196470503,
+        2.8573726196470504,
+        3.2321726196470504
+      ],
+      "surface_z_m": [
+        0.38404799999999994,
+        0.256032,
+        0.128016,
+        0.0
+      ]
+    },
+    {
+      "course": "georgia_tech_plaza_up",
+      "level": 3,
+      "settings": {
+        "risers": 4,
+        "rise_scale": 0.88,
+        "added_tread_m": 0.03,
+        "width_m": 1.7,
+        "hold_s": 1.2,
+        "lift_m": 0.09,
+        "push_mps": 0.12,
+        "scan_dropout": 0.03
+      },
+      "edge_x_m_from_tile_start": [
+        1.4695542039028056,
+        1.8805542039028056,
+        2.2915542039028054,
+        2.702554203902806
+      ],
+      "surface_z_m": [
+        0.0,
+        0.11176,
+        0.22352,
+        0.33528,
+        0.44704
+      ]
+    },
+    {
+      "course": "georgia_tech_plaza_down",
+      "level": 3,
+      "settings": {
+        "risers": 4,
+        "rise_scale": 0.88,
+        "added_tread_m": 0.03,
+        "width_m": 1.7,
+        "hold_s": 1.2,
+        "lift_m": 0.09,
+        "push_mps": 0.12,
+        "scan_dropout": 0.03
+      },
+      "edge_x_m_from_tile_start": [
+        1.4197099765995522,
+        1.8307099765995523,
+        2.2417099765995525,
+        2.652709976599552
+      ],
+      "surface_z_m": [
+        0.44704,
+        0.33528,
+        0.22352,
+        0.11176,
+        0.0
+      ]
+    },
+    {
+      "course": "lsu_entry_up",
+      "level": 3,
+      "settings": {
+        "risers": 4,
+        "rise_scale": 0.88,
+        "added_tread_m": 0.03,
+        "width_m": 1.7,
+        "hold_s": 1.2,
+        "lift_m": 0.09,
+        "push_mps": 0.12,
+        "scan_dropout": 0.03
+      },
+      "edge_x_m_from_tile_start": [
+        1.4063464116860092,
+        1.791946411686009,
+        2.1775464116860093,
+        2.563146411686009
+      ],
+      "surface_z_m": [
+        0.0,
+        0.13411199999999998,
+        0.26822399999999996,
+        0.4023359999999999,
+        0.5364479999999999
+      ]
+    },
+    {
+      "course": "lsu_entry_down",
+      "level": 3,
+      "settings": {
+        "risers": 4,
+        "rise_scale": 0.88,
+        "added_tread_m": 0.03,
+        "width_m": 1.7,
+        "hold_s": 1.2,
+        "lift_m": 0.09,
+        "push_mps": 0.12,
+        "scan_dropout": 0.03
+      },
+      "edge_x_m_from_tile_start": [
+        1.4615458088580775,
+        1.8471458088580774,
+        2.2327458088580774,
+        2.618345808858077
+      ],
+      "surface_z_m": [
+        0.5364479999999999,
+        0.4023359999999999,
+        0.26822399999999996,
+        0.13411199999999998,
+        0.0
+      ]
+    },
+    {
+      "course": "wyoming_concrete_up",
+      "level": 3,
+      "settings": {
+        "risers": 4,
+        "rise_scale": 0.88,
+        "added_tread_m": 0.03,
+        "width_m": 1.7,
+        "hold_s": 1.2,
+        "lift_m": 0.09,
+        "push_mps": 0.12,
+        "scan_dropout": 0.03
+      },
+      "edge_x_m_from_tile_start": [
+        1.4794503205098597,
+        1.8142503205098597,
+        2.1490503205098594,
+        2.48385032050986
+      ],
+      "surface_z_m": [
+        0.0,
+        0.13411199999999998,
+        0.26822399999999996,
+        0.4023359999999999,
+        0.5364479999999999
+      ]
+    },
+    {
+      "course": "wyoming_concrete_down",
+      "level": 3,
+      "settings": {
+        "risers": 4,
+        "rise_scale": 0.88,
+        "added_tread_m": 0.03,
+        "width_m": 1.7,
+        "hold_s": 1.2,
+        "lift_m": 0.09,
+        "push_mps": 0.12,
+        "scan_dropout": 0.03
+      },
+      "edge_x_m_from_tile_start": [
+        1.473239779171875,
+        1.808039779171875,
+        2.142839779171875,
+        2.477639779171875
+      ],
+      "surface_z_m": [
+        0.5364479999999999,
+        0.4023359999999999,
+        0.26822399999999996,
+        0.13411199999999998,
+        0.0
+      ]
+    },
+    {
+      "course": "virginia_tech_exterior_up",
+      "level": 3,
+      "settings": {
+        "risers": 4,
+        "rise_scale": 0.88,
+        "added_tread_m": 0.03,
+        "width_m": 1.7,
+        "hold_s": 1.2,
+        "lift_m": 0.09,
+        "push_mps": 0.12,
+        "scan_dropout": 0.03
+      },
+      "edge_x_m_from_tile_start": [
+        1.4109366265596854,
+        1.7457366265596854,
+        2.0805366265596854,
+        2.4153366265596854
+      ],
+      "surface_z_m": [
+        0.0,
+        0.156464,
+        0.312928,
+        0.469392,
+        0.625856
+      ]
+    },
+    {
+      "course": "virginia_tech_exterior_down",
+      "level": 3,
+      "settings": {
+        "risers": 4,
+        "rise_scale": 0.88,
+        "added_tread_m": 0.03,
+        "width_m": 1.7,
+        "hold_s": 1.2,
+        "lift_m": 0.09,
+        "push_mps": 0.12,
+        "scan_dropout": 0.03
+      },
+      "edge_x_m_from_tile_start": [
+        1.4615680109013205,
+        1.7963680109013205,
+        2.1311680109013205,
+        2.4659680109013205
+      ],
+      "surface_z_m": [
+        0.625856,
+        0.469392,
+        0.312928,
+        0.156464,
+        0.0
+      ]
+    },
+    {
+      "course": "uconn_exterior_up",
+      "level": 3,
+      "settings": {
+        "risers": 4,
+        "rise_scale": 0.88,
+        "added_tread_m": 0.03,
+        "width_m": 1.7,
+        "hold_s": 1.2,
+        "lift_m": 0.09,
+        "push_mps": 0.12,
+        "scan_dropout": 0.03
+      },
+      "edge_x_m_from_tile_start": [
+        1.4528121205900004,
+        1.8638121205900005,
+        2.2748121205900005,
+        2.6858121205900005
+      ],
+      "surface_z_m": [
+        0.0,
+        0.156464,
+        0.312928,
+        0.469392,
+        0.625856
+      ]
+    },
+    {
+      "course": "uconn_exterior_down",
+      "level": 3,
+      "settings": {
+        "risers": 4,
+        "rise_scale": 0.88,
+        "added_tread_m": 0.03,
+        "width_m": 1.7,
+        "hold_s": 1.2,
+        "lift_m": 0.09,
+        "push_mps": 0.12,
+        "scan_dropout": 0.03
+      },
+      "edge_x_m_from_tile_start": [
+        1.4633496211319275,
+        1.8743496211319275,
+        2.2853496211319273,
+        2.6963496211319278
+      ],
+      "surface_z_m": [
+        0.625856,
+        0.469392,
+        0.312928,
+        0.156464,
+        0.0
+      ]
+    },
+    {
+      "course": "virginia_tech_split_up",
+      "level": 3,
+      "settings": {
+        "risers": 4,
+        "rise_scale": 0.88,
+        "added_tread_m": 0.03,
+        "width_m": 1.7,
+        "hold_s": 1.2,
+        "lift_m": 0.09,
+        "push_mps": 0.12,
+        "scan_dropout": 0.03
+      },
+      "edge_x_m_from_tile_start": [
+        1.4315694625638797,
+        1.7663694625638797,
+        3.1011694625638797,
+        3.4359694625638797
+      ],
+      "surface_z_m": [
+        0.0,
+        0.156464,
+        0.312928,
+        0.469392,
+        0.625856
+      ]
+    },
+    {
+      "course": "virginia_tech_split_down",
+      "level": 3,
+      "settings": {
+        "risers": 4,
+        "rise_scale": 0.88,
+        "added_tread_m": 0.03,
+        "width_m": 1.7,
+        "hold_s": 1.2,
+        "lift_m": 0.09,
+        "push_mps": 0.12,
+        "scan_dropout": 0.03
+      },
+      "edge_x_m_from_tile_start": [
+        1.459593256153688,
+        1.794393256153688,
+        3.129193256153688,
+        3.463993256153688
+      ],
+      "surface_z_m": [
+        0.625856,
+        0.469392,
+        0.312928,
+        0.156464,
+        0.0
+      ]
+    },
+    {
+      "course": "georgia_tech_plaza_up",
+      "level": 4,
+      "settings": {
+        "risers": 6,
+        "rise_scale": 1.0,
+        "added_tread_m": 0.0,
+        "width_m": 1.6,
+        "hold_s": 1.6,
+        "lift_m": 0.105,
+        "push_mps": 0.16,
+        "scan_dropout": 0.04
+      },
+      "edge_x_m_from_tile_start": [
+        1.4598273486444806,
+        1.8408273486444806,
+        2.2218273486444806,
+        2.602827348644481,
+        2.9838273486444806,
+        3.3648273486444804
+      ],
+      "surface_z_m": [
+        0.0,
+        0.127,
+        0.254,
+        0.381,
+        0.508,
+        0.635,
+        0.762
+      ]
+    },
+    {
+      "course": "georgia_tech_plaza_down",
+      "level": 4,
+      "settings": {
+        "risers": 6,
+        "rise_scale": 1.0,
+        "added_tread_m": 0.0,
+        "width_m": 1.6,
+        "hold_s": 1.6,
+        "lift_m": 0.105,
+        "push_mps": 0.16,
+        "scan_dropout": 0.04
+      },
+      "edge_x_m_from_tile_start": [
+        1.441344355285374,
+        1.822344355285374,
+        2.203344355285374,
+        2.584344355285374,
+        2.965344355285374,
+        3.3463443552853738
+      ],
+      "surface_z_m": [
+        0.762,
+        0.635,
+        0.508,
+        0.381,
+        0.254,
+        0.127,
+        0.0
+      ]
+    },
+    {
+      "course": "lsu_entry_up",
+      "level": 4,
+      "settings": {
+        "risers": 6,
+        "rise_scale": 1.0,
+        "added_tread_m": 0.0,
+        "width_m": 1.6,
+        "hold_s": 1.6,
+        "lift_m": 0.105,
+        "push_mps": 0.16,
+        "scan_dropout": 0.04
+      },
+      "edge_x_m_from_tile_start": [
+        1.4249124209133757,
+        1.7805124209133756,
+        2.1361124209133755,
+        2.491712420913376,
+        2.8473124209133758,
+        3.2029124209133757
+      ],
+      "surface_z_m": [
+        0.0,
+        0.15239999999999998,
+        0.30479999999999996,
+        0.45719999999999994,
+        0.6095999999999999,
+        0.7619999999999999,
+        0.9143999999999999
+      ]
+    },
+    {
+      "course": "lsu_entry_down",
+      "level": 4,
+      "settings": {
+        "risers": 6,
+        "rise_scale": 1.0,
+        "added_tread_m": 0.0,
+        "width_m": 1.6,
+        "hold_s": 1.6,
+        "lift_m": 0.105,
+        "push_mps": 0.16,
+        "scan_dropout": 0.04
+      },
+      "edge_x_m_from_tile_start": [
+        1.4876283151618472,
+        1.8432283151618472,
+        2.198828315161847,
+        2.5544283151618474,
+        2.9100283151618473,
+        3.2656283151618473
+      ],
+      "surface_z_m": [
+        0.9143999999999999,
+        0.7619999999999999,
+        0.6095999999999999,
+        0.45719999999999994,
+        0.30479999999999996,
+        0.15239999999999998,
+        0.0
+      ]
+    },
+    {
+      "course": "wyoming_concrete_up",
+      "level": 4,
+      "settings": {
+        "risers": 6,
+        "rise_scale": 1.0,
+        "added_tread_m": 0.0,
+        "width_m": 1.6,
+        "hold_s": 1.6,
+        "lift_m": 0.105,
+        "push_mps": 0.16,
+        "scan_dropout": 0.04
+      },
+      "edge_x_m_from_tile_start": [
+        1.4828837936292452,
+        1.7876837936292451,
+        2.092483793629245,
+        2.397283793629245,
+        2.702083793629245,
+        3.006883793629245
+      ],
+      "surface_z_m": [
+        0.0,
+        0.15239999999999998,
+        0.30479999999999996,
+        0.45719999999999994,
+        0.6095999999999999,
+        0.7619999999999999,
+        0.9143999999999999
+      ]
+    },
+    {
+      "course": "wyoming_concrete_down",
+      "level": 4,
+      "settings": {
+        "risers": 6,
+        "rise_scale": 1.0,
+        "added_tread_m": 0.0,
+        "width_m": 1.6,
+        "hold_s": 1.6,
+        "lift_m": 0.105,
+        "push_mps": 0.16,
+        "scan_dropout": 0.04
+      },
+      "edge_x_m_from_tile_start": [
+        1.4430782066171195,
+        1.7478782066171195,
+        2.052678206617119,
+        2.3574782066171194,
+        2.6622782066171196,
+        2.9670782066171193
+      ],
+      "surface_z_m": [
+        0.9143999999999999,
+        0.7619999999999999,
+        0.6095999999999999,
+        0.45719999999999994,
+        0.30479999999999996,
+        0.15239999999999998,
+        0.0
+      ]
+    },
+    {
+      "course": "virginia_tech_exterior_up",
+      "level": 4,
+      "settings": {
+        "risers": 6,
+        "rise_scale": 1.0,
+        "added_tread_m": 0.0,
+        "width_m": 1.6,
+        "hold_s": 1.6,
+        "lift_m": 0.105,
+        "push_mps": 0.16,
+        "scan_dropout": 0.04
+      },
+      "edge_x_m_from_tile_start": [
+        1.4691433893211343,
+        1.7739433893211343,
+        2.0787433893211342,
+        2.383543389321134,
+        2.688343389321134,
+        2.9931433893211343
+      ],
+      "surface_z_m": [
+        0.0,
+        0.17779999999999999,
+        0.35559999999999997,
+        0.5334,
+        0.7111999999999999,
+        0.8889999999999999,
+        1.0668
+      ]
+    },
+    {
+      "course": "virginia_tech_exterior_down",
+      "level": 4,
+      "settings": {
+        "risers": 6,
+        "rise_scale": 1.0,
+        "added_tread_m": 0.0,
+        "width_m": 1.6,
+        "hold_s": 1.6,
+        "lift_m": 0.105,
+        "push_mps": 0.16,
+        "scan_dropout": 0.04
+      },
+      "edge_x_m_from_tile_start": [
+        1.493177466031828,
+        1.797977466031828,
+        2.102777466031828,
+        2.407577466031828,
+        2.712377466031828,
+        3.0171774660318276
+      ],
+      "surface_z_m": [
+        1.0668,
+        0.8889999999999999,
+        0.7111999999999999,
+        0.5334,
+        0.35559999999999997,
+        0.17779999999999999,
+        0.0
+      ]
+    },
+    {
+      "course": "uconn_exterior_up",
+      "level": 4,
+      "settings": {
+        "risers": 6,
+        "rise_scale": 1.0,
+        "added_tread_m": 0.0,
+        "width_m": 1.6,
+        "hold_s": 1.6,
+        "lift_m": 0.105,
+        "push_mps": 0.16,
+        "scan_dropout": 0.04
+      },
+      "edge_x_m_from_tile_start": [
+        1.4822951686694852,
+        1.8632951686694852,
+        2.244295168669485,
+        2.625295168669485,
+        3.006295168669485,
+        3.3872951686694854
+      ],
+      "surface_z_m": [
+        0.0,
+        0.17779999999999999,
+        0.35559999999999997,
+        0.5334,
+        0.7111999999999999,
+        0.8889999999999999,
+        1.0668
+      ]
+    },
+    {
+      "course": "uconn_exterior_down",
+      "level": 4,
+      "settings": {
+        "risers": 6,
+        "rise_scale": 1.0,
+        "added_tread_m": 0.0,
+        "width_m": 1.6,
+        "hold_s": 1.6,
+        "lift_m": 0.105,
+        "push_mps": 0.16,
+        "scan_dropout": 0.04
+      },
+      "edge_x_m_from_tile_start": [
+        1.4573721432806024,
+        1.8383721432806024,
+        2.2193721432806024,
+        2.6003721432806026,
+        2.9813721432806024,
+        3.362372143280602
+      ],
+      "surface_z_m": [
+        1.0668,
+        0.8889999999999999,
+        0.7111999999999999,
+        0.5334,
+        0.35559999999999997,
+        0.17779999999999999,
+        0.0
+      ]
+    },
+    {
+      "course": "virginia_tech_split_up",
+      "level": 4,
+      "settings": {
+        "risers": 6,
+        "rise_scale": 1.0,
+        "added_tread_m": 0.0,
+        "width_m": 1.6,
+        "hold_s": 1.6,
+        "lift_m": 0.105,
+        "push_mps": 0.16,
+        "scan_dropout": 0.04
+      },
+      "edge_x_m_from_tile_start": [
+        1.4617438344066755,
+        1.7665438344066755,
+        2.0713438344066755,
+        3.376143834406675,
+        3.6809438344066754,
+        3.9857438344066756
+      ],
+      "surface_z_m": [
+        0.0,
+        0.17779999999999999,
+        0.35559999999999997,
+        0.5334,
+        0.7111999999999999,
+        0.8889999999999999,
+        1.0668
+      ]
+    },
+    {
+      "course": "virginia_tech_split_down",
+      "level": 4,
+      "settings": {
+        "risers": 6,
+        "rise_scale": 1.0,
+        "added_tread_m": 0.0,
+        "width_m": 1.6,
+        "hold_s": 1.6,
+        "lift_m": 0.105,
+        "push_mps": 0.16,
+        "scan_dropout": 0.04
+      },
+      "edge_x_m_from_tile_start": [
+        1.4282247609208978,
+        1.7330247609208977,
+        2.0378247609208975,
+        3.3426247609208977,
+        3.647424760920898,
+        3.952224760920898
+      ],
+      "surface_z_m": [
+        1.0668,
+        0.8889999999999999,
+        0.7111999999999999,
+        0.5334,
+        0.35559999999999997,
+        0.17779999999999999,
+        0.0
+      ]
+    },
+    {
+      "course": "georgia_tech_plaza_up",
+      "level": 5,
+      "settings": {
+        "risers": 6,
+        "rise_scale": 1.0,
+        "added_tread_m": 0.0,
+        "width_m": 1.6,
+        "hold_s": 2.1,
+        "lift_m": 0.12,
+        "push_mps": 0.22,
+        "scan_dropout": 0.07
+      },
+      "edge_x_m_from_tile_start": [
+        1.4598273486444806,
+        1.8408273486444806,
+        2.2218273486444806,
+        2.602827348644481,
+        2.9838273486444806,
+        3.3648273486444804
+      ],
+      "surface_z_m": [
+        0.0,
+        0.127,
+        0.254,
+        0.381,
+        0.508,
+        0.635,
+        0.762
+      ]
+    },
+    {
+      "course": "georgia_tech_plaza_down",
+      "level": 5,
+      "settings": {
+        "risers": 6,
+        "rise_scale": 1.0,
+        "added_tread_m": 0.0,
+        "width_m": 1.6,
+        "hold_s": 2.1,
+        "lift_m": 0.12,
+        "push_mps": 0.22,
+        "scan_dropout": 0.07
+      },
+      "edge_x_m_from_tile_start": [
+        1.441344355285374,
+        1.822344355285374,
+        2.203344355285374,
+        2.584344355285374,
+        2.965344355285374,
+        3.3463443552853738
+      ],
+      "surface_z_m": [
+        0.762,
+        0.635,
+        0.508,
+        0.381,
+        0.254,
+        0.127,
+        0.0
+      ]
+    },
+    {
+      "course": "lsu_entry_up",
+      "level": 5,
+      "settings": {
+        "risers": 6,
+        "rise_scale": 1.0,
+        "added_tread_m": 0.0,
+        "width_m": 1.6,
+        "hold_s": 2.1,
+        "lift_m": 0.12,
+        "push_mps": 0.22,
+        "scan_dropout": 0.07
+      },
+      "edge_x_m_from_tile_start": [
+        1.4249124209133757,
+        1.7805124209133756,
+        2.1361124209133755,
+        2.491712420913376,
+        2.8473124209133758,
+        3.2029124209133757
+      ],
+      "surface_z_m": [
+        0.0,
+        0.15239999999999998,
+        0.30479999999999996,
+        0.45719999999999994,
+        0.6095999999999999,
+        0.7619999999999999,
+        0.9143999999999999
+      ]
+    },
+    {
+      "course": "lsu_entry_down",
+      "level": 5,
+      "settings": {
+        "risers": 6,
+        "rise_scale": 1.0,
+        "added_tread_m": 0.0,
+        "width_m": 1.6,
+        "hold_s": 2.1,
+        "lift_m": 0.12,
+        "push_mps": 0.22,
+        "scan_dropout": 0.07
+      },
+      "edge_x_m_from_tile_start": [
+        1.4876283151618472,
+        1.8432283151618472,
+        2.198828315161847,
+        2.5544283151618474,
+        2.9100283151618473,
+        3.2656283151618473
+      ],
+      "surface_z_m": [
+        0.9143999999999999,
+        0.7619999999999999,
+        0.6095999999999999,
+        0.45719999999999994,
+        0.30479999999999996,
+        0.15239999999999998,
+        0.0
+      ]
+    },
+    {
+      "course": "wyoming_concrete_up",
+      "level": 5,
+      "settings": {
+        "risers": 6,
+        "rise_scale": 1.0,
+        "added_tread_m": 0.0,
+        "width_m": 1.6,
+        "hold_s": 2.1,
+        "lift_m": 0.12,
+        "push_mps": 0.22,
+        "scan_dropout": 0.07
+      },
+      "edge_x_m_from_tile_start": [
+        1.4828837936292452,
+        1.7876837936292451,
+        2.092483793629245,
+        2.397283793629245,
+        2.702083793629245,
+        3.006883793629245
+      ],
+      "surface_z_m": [
+        0.0,
+        0.15239999999999998,
+        0.30479999999999996,
+        0.45719999999999994,
+        0.6095999999999999,
+        0.7619999999999999,
+        0.9143999999999999
+      ]
+    },
+    {
+      "course": "wyoming_concrete_down",
+      "level": 5,
+      "settings": {
+        "risers": 6,
+        "rise_scale": 1.0,
+        "added_tread_m": 0.0,
+        "width_m": 1.6,
+        "hold_s": 2.1,
+        "lift_m": 0.12,
+        "push_mps": 0.22,
+        "scan_dropout": 0.07
+      },
+      "edge_x_m_from_tile_start": [
+        1.4430782066171195,
+        1.7478782066171195,
+        2.052678206617119,
+        2.3574782066171194,
+        2.6622782066171196,
+        2.9670782066171193
+      ],
+      "surface_z_m": [
+        0.9143999999999999,
+        0.7619999999999999,
+        0.6095999999999999,
+        0.45719999999999994,
+        0.30479999999999996,
+        0.15239999999999998,
+        0.0
+      ]
+    },
+    {
+      "course": "virginia_tech_exterior_up",
+      "level": 5,
+      "settings": {
+        "risers": 6,
+        "rise_scale": 1.0,
+        "added_tread_m": 0.0,
+        "width_m": 1.6,
+        "hold_s": 2.1,
+        "lift_m": 0.12,
+        "push_mps": 0.22,
+        "scan_dropout": 0.07
+      },
+      "edge_x_m_from_tile_start": [
+        1.4691433893211343,
+        1.7739433893211343,
+        2.0787433893211342,
+        2.383543389321134,
+        2.688343389321134,
+        2.9931433893211343
+      ],
+      "surface_z_m": [
+        0.0,
+        0.17779999999999999,
+        0.35559999999999997,
+        0.5334,
+        0.7111999999999999,
+        0.8889999999999999,
+        1.0668
+      ]
+    },
+    {
+      "course": "virginia_tech_exterior_down",
+      "level": 5,
+      "settings": {
+        "risers": 6,
+        "rise_scale": 1.0,
+        "added_tread_m": 0.0,
+        "width_m": 1.6,
+        "hold_s": 2.1,
+        "lift_m": 0.12,
+        "push_mps": 0.22,
+        "scan_dropout": 0.07
+      },
+      "edge_x_m_from_tile_start": [
+        1.493177466031828,
+        1.797977466031828,
+        2.102777466031828,
+        2.407577466031828,
+        2.712377466031828,
+        3.0171774660318276
+      ],
+      "surface_z_m": [
+        1.0668,
+        0.8889999999999999,
+        0.7111999999999999,
+        0.5334,
+        0.35559999999999997,
+        0.17779999999999999,
+        0.0
+      ]
+    },
+    {
+      "course": "uconn_exterior_up",
+      "level": 5,
+      "settings": {
+        "risers": 6,
+        "rise_scale": 1.0,
+        "added_tread_m": 0.0,
+        "width_m": 1.6,
+        "hold_s": 2.1,
+        "lift_m": 0.12,
+        "push_mps": 0.22,
+        "scan_dropout": 0.07
+      },
+      "edge_x_m_from_tile_start": [
+        1.4822951686694852,
+        1.8632951686694852,
+        2.244295168669485,
+        2.625295168669485,
+        3.006295168669485,
+        3.3872951686694854
+      ],
+      "surface_z_m": [
+        0.0,
+        0.17779999999999999,
+        0.35559999999999997,
+        0.5334,
+        0.7111999999999999,
+        0.8889999999999999,
+        1.0668
+      ]
+    },
+    {
+      "course": "uconn_exterior_down",
+      "level": 5,
+      "settings": {
+        "risers": 6,
+        "rise_scale": 1.0,
+        "added_tread_m": 0.0,
+        "width_m": 1.6,
+        "hold_s": 2.1,
+        "lift_m": 0.12,
+        "push_mps": 0.22,
+        "scan_dropout": 0.07
+      },
+      "edge_x_m_from_tile_start": [
+        1.4573721432806024,
+        1.8383721432806024,
+        2.2193721432806024,
+        2.6003721432806026,
+        2.9813721432806024,
+        3.362372143280602
+      ],
+      "surface_z_m": [
+        1.0668,
+        0.8889999999999999,
+        0.7111999999999999,
+        0.5334,
+        0.35559999999999997,
+        0.17779999999999999,
+        0.0
+      ]
+    },
+    {
+      "course": "virginia_tech_split_up",
+      "level": 5,
+      "settings": {
+        "risers": 6,
+        "rise_scale": 1.0,
+        "added_tread_m": 0.0,
+        "width_m": 1.6,
+        "hold_s": 2.1,
+        "lift_m": 0.12,
+        "push_mps": 0.22,
+        "scan_dropout": 0.07
+      },
+      "edge_x_m_from_tile_start": [
+        1.4617438344066755,
+        1.7665438344066755,
+        2.0713438344066755,
+        3.376143834406675,
+        3.6809438344066754,
+        3.9857438344066756
+      ],
+      "surface_z_m": [
+        0.0,
+        0.17779999999999999,
+        0.35559999999999997,
+        0.5334,
+        0.7111999999999999,
+        0.8889999999999999,
+        1.0668
+      ]
+    },
+    {
+      "course": "virginia_tech_split_down",
+      "level": 5,
+      "settings": {
+        "risers": 6,
+        "rise_scale": 1.0,
+        "added_tread_m": 0.0,
+        "width_m": 1.6,
+        "hold_s": 2.1,
+        "lift_m": 0.12,
+        "push_mps": 0.22,
+        "scan_dropout": 0.07
+      },
+      "edge_x_m_from_tile_start": [
+        1.4282247609208978,
+        1.7330247609208977,
+        2.0378247609208975,
+        3.3426247609208977,
+        3.647424760920898,
+        3.952224760920898
+      ],
+      "surface_z_m": [
+        1.0668,
+        0.8889999999999999,
+        0.7111999999999999,
+        0.5334,
+        0.35559999999999997,
+        0.17779999999999999,
+        0.0
+      ]
+    }
+  ]
+}

@@ -29,3 +29,14 @@ The [full reference release](https://github.com/ahmedelbamby-aast/g1-edu-stairs/
 contains all nine checkpoints, the ONNX export, evaluation, TensorBoard and
 GPU logs, and four 720p clips. The final checkpoint completed 299 of 320
 held-out stair episodes. [Training report](../doc/training-report.md)
+
+## Campus balance and stair phases
+
+The [campus curriculum](../doc/campus-sim2real.md) adds separate balance and step drills,
+six stair families, and a held-out test for each level and skill.
+
+| Run | Evidence |
+| --- | --- |
+| [Campus smoke test](https://github.com/ahmedelbamby-aast/g1-edu-stairs/releases/tag/run-campus-smoke-v2) | Two-GPU rollout, actor transfer, ONNX parity, and a 156-cell headless test. The landing-command retest completed all 24 level 0 full flights with the same checkpoint. |
+| [Campus pilot](https://github.com/ahmedelbamby-aast/g1-edu-stairs/releases/tag/run-campus-pilot-s42) | First training stage, stopped after saving update 100 to continue with the revised landing command. |
+| [Campus refinement recovery copy](https://github.com/ahmedelbamby-aast/g1-edu-stairs/releases/tag/run-campus-refine-s42-checkpoint) | Latest saved checkpoint and audit. The [resolved settings](results/campus-refine-s42/) include the source checkpoint checksum and realized stair geometry. |

@@ -1,0 +1,1 @@
+.venv/bin/python -m scripts.train Unitree-G1-EDU-Campus --gpu-ids \[0\,1\] --env.scene.num-envs 1200 --agent.seed 42 --agent.max-iterations 120 --agent.save-interval 20 --randomize-initial-episode-length False --resume-checkpoint /kaggle/working/g1-edu-stairs/campus-pilot-s42/g1_edu_campus/2026-11-11_13-39-58/model_100.pt
