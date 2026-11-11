@@ -92,6 +92,7 @@ def campus_env_cfg(
   for name in ("track_linear_velocity", "progress", "centerline", "pose", "foot_gait", "stand_still"):
     cfg.rewards.pop(name)
   cfg.rewards["motion"] = RewardTermCfg(func=mdp.motion_reward, weight=1.2)
+  cfg.rewards["lane_center"] = RewardTermCfg(func=mdp.lane_cost, weight=-1.5)
   cfg.rewards["practice"] = RewardTermCfg(func=mdp.practice_reward, weight=1.6)
   cfg.rewards["phase_bonus"] = RewardTermCfg(func=mdp.phase_bonus, weight=12.0)
   cfg.terminations["time_out"] = TerminationTermCfg(func=mdp.timeout, time_out=True)

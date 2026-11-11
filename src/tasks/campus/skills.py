@@ -49,6 +49,9 @@ class CampusSkillCfg(CommandTermCfg):
   load_fraction: float = .55
   transfer_s: float = .06
   finish_s: float = .10
+  finish_cross_m: float = .53
+  finish_stop_m: float = .69
+  finish_max_speed_mps: float = .25
   drill_timeout_s: float = 8.0
   lane_margin_m: float = .16
 
@@ -197,7 +200,8 @@ class CampusSkill(CommandTerm):
     transferable = contact & (force[self.ids, 1 - self.support] >= force.sum(dim=1) * self.cfg.load_fraction)
     on_landing = ((feet[..., 0] - origin[:, 0:1]) > (edge[:, None] + .12)).all(dim=1)
     on_landing &= ((feet[..., 2] - goal_z[:, None]).abs() < .055).all(dim=1)
-    finish = found.all(dim=1) & on_landing & (root[:, 0] > edge + .53) & upright
+    finish = found.all(dim=1) & on_landing & (root[:, 0] > edge + self.cfg.finish_cross_m) & upright
+    finish &= velocity[:, :2].norm(dim=1) <= self.cfg.finish_max_speed_mps
     finish &= root[:, 1].abs() < width / 2 - self.cfg.lane_margin_m
     holding = supported & lifted & near_support & upright & (velocity[:, :2].norm(dim=1) < .28)
     keep = ((old == Phase.HOLD) & holding) | ((old == Phase.TRANSFER) & transferable) | ((old == Phase.FINISH) & finish)

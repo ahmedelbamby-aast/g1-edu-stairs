@@ -11,6 +11,12 @@ def command_for_skill(env, command_name="twist"):
   state = skill(env)
   twist = env.command_manager.get_command(command_name)
   speed = torch.where(state.balance, 0.0, torch.where(state.step_drill, .28, twist[:, 0]))
+  rows, columns = state.terrain.terrain_levels, state.terrain.terrain_types
+  last_riser = state.tiers[rows, 0].long() - 1
+  stop = state.terrain.env_origins[:, 0] + state.edges[rows, columns, last_riser] + state.cfg.finish_stop_m
+  distance = stop - state.robot.data.root_link_pos_w[:, 0]
+  settle_speed = (2.0 * distance).clamp(min=0.0, max=.55)
+  speed = torch.where(state.phase == Phase.FINISH, settle_speed, speed)
   return torch.cat((speed[:, None], twist[:, 1:]), dim=1)
 
 
@@ -97,6 +103,12 @@ def motion_reward(env):
   moving = torch.exp(-((speed[:, 0] - target).square() + speed[:, 1].square()) / .30**2)
   standing = torch.exp(-speed.square().sum(dim=1) / .17**2)
   return torch.where(state.balance, standing, moving)
+
+
+def lane_cost(env):
+  state = skill(env)
+  lateral = state.robot.data.root_link_pos_w[:, 1] - state.terrain.env_origins[:, 1]
+  return lateral.square() * ~state.balance
 
 
 def phase_bonus(env):

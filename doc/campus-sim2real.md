@@ -13,7 +13,7 @@ The campus task trains one policy across left-leg balance, right-leg balance, is
 | Plant | Put the swing foot on the target tread | Foot contact and load are within that tread's landing area |
 | Transfer | Move weight onto the new support foot | New foot carries the required share of the load for consecutive ticks |
 | Hold | Balance on the named leg | Other foot stays raised while the robot remains upright and nearly still |
-| Finish | Walk onto the final landing and settle | Both feet land beyond the final riser and the body stays upright |
+| Finish | Slow down and stop on the final landing | Both feet land beyond the final riser and the body stays upright below the finish speed limit |
 
 Balance drills run Shift → Lift → Hold. A left-leg drill requires the **left** foot to support the robot throughout the hold. A right-leg drill requires the **right** foot. Single-step drills end after Transfer. Full flights repeat the step sequence and finish with both feet on the far landing. The combined task allocates 20% of worlds to each support leg, 20% to isolated steps, and 40% to full flights. Both stair directions are represented in the step and flight groups.
 
