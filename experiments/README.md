@@ -13,4 +13,14 @@ Training outputs on Kaggle live under `/kaggle/working/g1-edu-stairs`.
 | [Dual-T4 768](https://github.com/ahmedelbamby-aast/g1-edu-stairs/releases/tag/run-t4-dual-768) | 768 environments | 23.2k transitions/s at a median 1.59 s per iteration after iteration 0. |
 | [Dual-T4 1536](https://github.com/ahmedelbamby-aast/g1-edu-stairs/releases/tag/run-t4-dual-1536) | 1,536 environments | 32.9k transitions/s at a median 2.24 s per iteration after iteration 0. |
 | [Dual-T4 3072](https://github.com/ahmedelbamby-aast/g1-edu-stairs/releases/tag/run-t4-dual-3072) | 3,072 environments | 38.2k transitions/s at a median 3.86 s per iteration after iteration 0. |
-| [Flat actor warm-start smoke](https://github.com/ahmedelbamby-aast/g1-edu-stairs/releases/tag/run-warm-flat-smoke) | 32 environments | Two PPO iterations initialized from Unitree's flat actor. Maximum transfer error was 7.15e-7. |
+
+[Setup diagnostics](https://github.com/ahmedelbamby-aast/g1-edu-stairs/releases/tag/run-bootstrap-diagnostics)
+records the initial dependency and command-line fixes.
+
+## Reference training
+
+Run `reference-t4-s42` uses the 160-update reference profile and Unitree's
+flat-walking actor. The [resolved settings](results/reference-t4-s42/) record
+the exact environment, algorithm, launch command, and actor transfer.
+The [recovery release](https://github.com/ahmedelbamby-aast/g1-edu-stairs/releases/tag/run-reference-t4-s42-checkpoint)
+contains a saved checkpoint and its settings.

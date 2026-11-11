@@ -61,7 +61,7 @@ The algorithm is **Proximal Policy Optimization**, or PPO, from RSL-RL. At each 
 
 The actor receives 161 values. The first 98 cover motion and balance from the IMU, the speed and heading command, the phase of the walking cycle, joint angles and velocities, and the previous action. The last 63 describe the terrain on a grid around the pelvis. The grid has 9 points forward and backward by 7 points side to side, with 20 cm spacing. It rotates with the robot's heading.
 
-The critic gets 176 values during training, including additional body speed and foot information. Each episode uses a forward speed target between 0.45 and 0.70 m/s. The robot starts with a small random position and heading offset. Training also varies foot friction, encoder readings, and the torso's center of mass to help the policy handle small changes.
+The critic gets 176 values during training, including additional body speed and foot information. Each episode uses a forward speed target between 0.45 and 0.70 m/s. The robot starts up to 8 cm away from its nominal position and up to 0.12 radians (about 7°) off the course heading. Training varies foot friction from 0.55 to 1.25, adds up to 0.015 radians of encoder bias, and shifts the torso's center of mass up to 5 cm along each axis.
 
 ### What earns reward
 
@@ -76,7 +76,7 @@ The robot earns reward for moving forward at the target speed, keeping its headi
 | Supported finish | +250.0 on the finishing step |
 | Fall or leaving the lane | −150.0 on the failure step |
 
-MuJoCo applies these weights to different measurements and scales the reward by the control-step duration. The numbers in the table are configuration weights.
+MjLab applies these weights to the measurements from MuJoCo and scales the reward by the control-step duration.
 
 ## Course screenshots
 
@@ -96,4 +96,4 @@ The evaluation tests 16 episodes for each of the 24 course and difficulty combin
 
 The simulator and export use Unitree's motor order and joint settings. Physical use with SDK2 still needs a terrain sensor that provides the 63 terrain values and a heading command aligned with the flight. The work here uses the simulated G1 EDU.
 
-[Kaggle setup and recovery](kaggle-recovery.md) · [Experiment index](../experiments/README.md) · [Reference settings](../experiments/profiles/kaggle-reference.env)
+[Kaggle setup and recovery](kaggle-recovery.md) · [Experiment index](../experiments/README.md) · [Resolved reference settings](../experiments/results/reference-t4-s42/)

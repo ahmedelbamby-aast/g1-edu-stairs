@@ -1,0 +1,1 @@
+.venv/bin/python -m scripts.train Unitree-G1-EDU-Stairs --gpu-ids \[0\,1\] --env.scene.num-envs 3072 --agent.seed 42 --agent.max-iterations 160 --agent.save-interval 20 --init-actor-onnx deploy/robots/g1/config/policy/velocity/v0/exported/policy.onnx --agent.algorithm.learning-rate 0.0003 --agent.algorithm.schedule fixed --agent.algorithm.entropy-coef 0.003
