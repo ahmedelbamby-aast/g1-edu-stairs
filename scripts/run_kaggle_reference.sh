@@ -17,4 +17,5 @@ bash scripts/kaggle_stairs.sh evaluate --checkpoint "$checkpoint" \
   --onnx "$(dirname "$checkpoint")/policy.onnx" \
   --output "$run/evaluation.json" > "$run/evaluation.log" 2>&1 || status=$?
 printf '%s\n' "$status" > "$run/evaluation-exit-code.txt"
+.venv/bin/python -m scripts.training_metrics export --run "$run" --queue --catalog
 exit "$status"

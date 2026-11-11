@@ -300,6 +300,7 @@ def main():
   single.add_argument("--run", type=Path, required=True)
   single.add_argument("--output", type=Path)
   single.add_argument("--queue", action="store_true")
+  single.add_argument("--catalog", action="store_true")
   combined = commands.add_parser("compare")
   combined.add_argument("--runs", type=Path, nargs="+", required=True)
   combined.add_argument("--output", type=Path, required=True)
@@ -315,6 +316,8 @@ def main():
     summary = export_run(args.run, args.output)
     if args.queue:
       queue(args.run)
+    if args.catalog:
+      update_catalog(args.run.parent)
     print(json.dumps({"points": summary["points"], "plots": summary["plots"],
                       "missing_expected": summary["missing_expected"]}))
   elif args.command == "compare":

@@ -26,4 +26,5 @@ stress_pid=$!
 status=0
 wait "$clean_pid" || status=$?
 wait "$stress_pid" || status=$?
+.venv/bin/python -m scripts.training_metrics export --run "$run" --queue --catalog
 exit "$status"

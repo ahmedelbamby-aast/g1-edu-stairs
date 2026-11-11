@@ -94,7 +94,7 @@ finish() {
   fi
   printf '%s\n' "$status" > "$run_dir/exit-code.txt"
   if [[ "${STAIRS_DEFER_REPORT:-0}" != 1 || "$status" != 0 ]]; then
-    if ! .venv/bin/python -m scripts.training_metrics export --run "$run_dir" --queue \
+    if ! .venv/bin/python -m scripts.training_metrics export --run "$run_dir" --queue --catalog \
         >> "$run_dir/metrics-export.log" 2>&1; then
       echo "Metric export failed; see $run_dir/metrics-export.log" >&2
       if [[ "$status" == 0 ]]; then status=95; fi

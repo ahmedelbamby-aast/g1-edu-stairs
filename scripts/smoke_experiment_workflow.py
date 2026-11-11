@@ -10,7 +10,7 @@ from unittest.mock import patch
 from torch.utils.tensorboard import SummaryWriter
 
 from scripts import run_mastery_experiment
-from scripts.training_metrics import atomic_json, pending, read_json
+from scripts.training_metrics import atomic_json, collect, pending, read_json
 
 
 def main():
@@ -39,6 +39,10 @@ def main():
       checkpoint = run / "model_0.pt"
       checkpoint.write_text("Synthetic placeholder, not a policy", encoding="utf-8")
       (run / "exit-code.txt").write_text("1\n" if failure else "0\n", encoding="utf-8")
+      (run / "gpu-samples.csv").write_text(
+          "timestamp, index, memory.used [MiB], utilization.gpu [%], power.draw [W]\n"
+          "1970/01/01 00:16:40.000, 0, 1234, 98, 55.5\n"
+          "1970/01/01 00:16:40.001, 1, 2345, 97, 54.5\n", encoding="utf-8")
       with SummaryWriter(str(run)) as writer:
         writer.add_scalar("Loss/value", 1., 0, walltime=1000 + len(seen))
       if failure:
@@ -65,6 +69,10 @@ def main():
   assert len([call for call in seen if "evaluate-round-trip" in call]) == 4
   assert read_json(args.output / "synthetic-workflow-report" / "workflow-finished.json")["completed_updates"] == 2
   assert len(pending(args.output)) == 3
+  telemetry, _ = collect(args.output / "synthetic-workflow-u0001")
+  gpu = [row for row in telemetry if row["kind"] == "system"]
+  assert len(gpu) == 6 and all(row["update"] == -1 for row in gpu)
+  assert next(row["value"] for row in gpu if row["metric"] == "GPU/1/memory_mib") == 2345
   failure = True
   try:
     execute("synthetic-failure", 1)
@@ -75,7 +83,7 @@ def main():
   assert len(pending(args.output)) == 5
   atomic_json(args.output / "smoke.json", {"status": "passed", "optimizer_steps": 0,
       "data_kind": "mocked orchestration", "checks": ["initialization_then_resume", "two_suites_each_segment",
-      "expert_specific_evaluation", "comparison_report_queued", "failure_propagated_and_archived"]})
+      "expert_specific_evaluation", "comparison_report_queued", "failure_propagated_and_archived", "gpu_telemetry_csv"]})
   print("PASS mocked experiment orchestration; no training producer executed")
 
 
