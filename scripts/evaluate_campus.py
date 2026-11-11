@@ -19,11 +19,12 @@ from src.tasks.campus.skills import Drill, Phase, skill
 from src.tasks.campus.terrain import COURSES, DIFFICULTIES
 
 
-def assignments():
+def assignments(drill_name=None):
   return [
     (level, column, drill)
     for level in range(len(DIFFICULTIES))
     for drill in Drill
+    if drill_name is None or drill.name.lower() == drill_name
     for column in (range(len(COURSES)) if drill >= Drill.STEP else (0,))
   ]
 
@@ -31,7 +32,7 @@ def assignments():
 @torch.inference_mode()
 def evaluate(args):
   configure_torch_backends()
-  cells = assignments()
+  cells = assignments(args.drill)
   cfg = campus_env_cfg(play=True, stress=args.suite == "stress", terrain_seed=args.terrain_seed)
   cfg.seed = args.seed
   cfg.scene.num_envs = len(cells) * args.episodes_per_cell
@@ -106,7 +107,7 @@ def evaluate(args):
     return {
       "task": TASK_ID, "suite": args.suite, "seed": args.seed, "terrain_seed": args.terrain_seed,
       "source_commit": subprocess.check_output(["git", "rev-parse", "HEAD"], text=True).strip(),
-      "device": args.device,
+      "device": args.device, "drill_filter": args.drill,
       "checkpoint": args.checkpoint.name,
       "checkpoint_sha256": hashlib.sha256(args.checkpoint.read_bytes()).hexdigest(),
       "onnx_max_abs_error": parity, "minimum_completion_fraction": args.min_success,
@@ -127,6 +128,7 @@ def main():
   parser.add_argument("--seed", type=int, default=913)
   parser.add_argument("--terrain-seed", type=int, default=79)
   parser.add_argument("--suite", choices=("clean", "stress"), default="stress")
+  parser.add_argument("--drill", choices=tuple(drill.name.lower() for drill in Drill))
   parser.add_argument("--min-success", type=float, default=.95)
   parser.add_argument("--max-falls", type=float, default=.0)
   parser.add_argument("--require-pass", action="store_true")

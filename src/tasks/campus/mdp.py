@@ -115,6 +115,13 @@ def phase_bonus(env):
   return skill(env).transition.float()
 
 
+def sustained_hold_reward(env):
+  state = skill(env)
+  required = state.tiers[state.terrain.terrain_levels, 2]
+  progress = (state.hold.float() * env.step_dt / required).clamp(max=1.0)
+  return ((state.phase == Phase.HOLD) & (state.hold > 0)).float() + progress * (state.phase == Phase.HOLD)
+
+
 def course_curriculum(env, env_ids):
   state = skill(env)
   terrain = state.terrain

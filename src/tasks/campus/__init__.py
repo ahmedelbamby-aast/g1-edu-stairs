@@ -95,6 +95,8 @@ def campus_env_cfg(
   cfg.rewards["lane_center"] = RewardTermCfg(func=mdp.lane_cost, weight=-1.5)
   cfg.rewards["practice"] = RewardTermCfg(func=mdp.practice_reward, weight=1.6)
   cfg.rewards["phase_bonus"] = RewardTermCfg(func=mdp.phase_bonus, weight=12.0)
+  if mode in ("left", "right"):
+    cfg.rewards["sustained_hold"] = RewardTermCfg(func=mdp.sustained_hold_reward, weight=2.0)
   cfg.terminations["time_out"] = TerminationTermCfg(func=mdp.timeout, time_out=True)
   cfg.terminations["out_of_lane"] = TerminationTermCfg(func=mdp.lane_exit)
   cfg.terminations["landing"] = TerminationTermCfg(func=mdp.advance)
