@@ -18,7 +18,8 @@ $suffix = if ($Checkpoint) { '-checkpoint' } else { '' }
 $mode = if ($Checkpoint) { 'checkpoint' } else { 'completed' }
 $archive = "$RunId$suffix.tar.gz"
 $tag = "run-$RunId$suffix"
-$sshOptions = @('-o', 'IdentitiesOnly=yes', '-o', 'BatchMode=yes', '-o', 'StrictHostKeyChecking=yes', '-i', $IdentityFile)
+$sshOptions = @('-o', 'IdentitiesOnly=yes', '-o', 'BatchMode=yes', '-o', 'StrictHostKeyChecking=yes',
+  '-o', 'ConnectTimeout=15', '-o', 'ServerAliveInterval=15', '-o', 'ServerAliveCountMax=3', '-i', $IdentityFile)
 if (Test-Path -LiteralPath $KnownHostsFile) { $sshOptions += @('-o', "UserKnownHostsFile=$KnownHostsFile") }
 
 $remoteCommand = "cd '$remoteRepo' && bash scripts/archive_stairs_run.sh '$RunId' '$mode'"

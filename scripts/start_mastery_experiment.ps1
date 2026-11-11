@@ -22,6 +22,8 @@ foreach ($gpu in 0,1) {
   ssh @sshOptions root@127.0.0.1 ($prefix + ".venv/bin/python -m scripts.preflight_training --teacher-onnx $InitActorOnnx --output /kaggle/working/g1-edu-stairs/$RunId-preflight --device cuda:$gpu")
   if ($LASTEXITCODE -ne 0) { throw "GPU $gpu preflight failed; no training launched." }
 }
+ssh @sshOptions root@127.0.0.1 ($prefix + ".venv/bin/python -m scripts.check_gpu_collective --output /kaggle/working/g1-edu-stairs/$RunId-preflight")
+if ($LASTEXITCODE -ne 0) { throw 'Two-GPU communication preflight failed; no training launched.' }
 if (-not $StartTraining) { Write-Output 'Preflight passed. Training was not started. Use -StartTraining for an explicit launch.'; return }
 $launch = "nohup .venv/bin/python -m scripts.run_mastery_experiment --run-id $RunId --stage $Stage --seed $Seed --init-actor-onnx $InitActorOnnx > /kaggle/working/g1-edu-stairs/$RunId.launch.log 2>&1 < /dev/null &"
 ssh @sshOptions root@127.0.0.1 ($prefix + $launch)

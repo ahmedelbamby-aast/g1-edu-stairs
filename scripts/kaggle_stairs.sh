@@ -105,6 +105,8 @@ finish() {
 }
 trap finish EXIT
 cp "$profile" "$run_dir/profile.env"
+printf 'NUM_ENVS=%s\nGPU_IDS=%s\nCPU_THREADS=%s\nITERATIONS=%s\nSAVE_INTERVAL=%s\nSEED=%s\n' \
+  "$NUM_ENVS" "$GPU_IDS" "$CPU_THREADS" "$ITERATIONS" "$SAVE_INTERVAL" "$SEED" > "$run_dir/effective-profile.env"
 git rev-parse HEAD > "$run_dir/git-commit.txt"
 .venv/bin/python -c 'import os,sys,time; from pathlib import Path; from scripts.training_metrics import atomic_json; p=Path(sys.argv[1]); atomic_json(p / "experiment.json", {"experiment_id":os.environ.get("STAIRS_EXPERIMENT_ID",p.name),"stage":os.environ.get("STAIRS_STAGE",os.environ.get("STAIRS_TASK","stairs")),"seed":int(sys.argv[2]),"start_update":int(os.environ.get("STAIRS_START_UPDATE",0)),"end_update":int(os.environ.get("STAIRS_END_UPDATE",sys.argv[3])),"started_at":time.time(),"data_kind":"training"})' "$run_dir" "$SEED" "$ITERATIONS"
 uv pip freeze --exclude-editable > "$run_dir/requirements.txt"
