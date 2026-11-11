@@ -97,6 +97,17 @@ The pilot resumed from update 100 and trained for 120 more updates after adding 
 
 The combined policy passed 76 of 156 clean cells and 63 of 156 stress cells. At the hardest stress level it completed 1 of 48 ascents and 0 of 48 descents. It did not pass the simulation acceptance gate. The clean and stress suites used the same six design families, a different placement seed from training, and different episode draws. [Resolved settings and evaluation results](../experiments/results/campus-refine-s42/)
 
+### Independent balance results
+
+Each leg received 100 additional updates from the combined checkpoint. Each suite tested 24 trials at each of six levels.
+
+| Support leg | Clean completions | Stress completions | Result |
+| --- | ---: | ---: | --- |
+| Left | 0/144 | 0/144 | The average best level 0 stress hold was 0.282 s against the 0.30 s target. |
+| Right | 43/144 | 26/144 | Level 1 passed all 24 clean trials. At level 2, it completed 19 clean trials and 5 stress trials. |
+
+Both legs reached the lift and hold phases, but neither passed the complete set of balance gates. The two specialist checkpoints are separate from the combined stair policy. [Left-leg evaluations](../experiments/results/campus-balance-left/) · [Right-leg evaluations](../experiments/results/campus-balance-right/)
+
 ## Physical G1 EDU integration
 
 The run exports a 180-input ONNX policy and a `sim2real-contract.json` with the ordered signals, joint order, action scaling and control period. The policy requires live estimates of terrain, the next foothold, swing foot position and foot contacts. The simulator provides these estimates from its physics state. SDK2 supplies joint state and IMU readings, and a robot-side estimator must supply the added signals. [Unitree G1 SDK example](https://github.com/unitreerobotics/unitree_ros2/blob/master/example/src/src/g1/lowlevel/g1_low_level_example.cpp)
