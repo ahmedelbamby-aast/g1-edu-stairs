@@ -110,9 +110,15 @@ def adaptive_curriculum(env, env_ids):
   trials.index_add_(0, cell, finished.float())
   occupied = (trials > 0).nonzero().flatten()
   cursor = state.result_cursor[occupied] % state.cfg.window_batches
-  state.result_success[occupied, cursor] = success[occupied]
-  state.result_trials[occupied, cursor] = trials[occupied]
-  state.result_cursor[occupied] += 1
+  # Asynchronous finishes often contribute only one trial per cell per reset.
+  # Accumulate small resets rather than expiring them before 64 trials exist.
+  batch_minimum = max(1, (state.cfg.minimum_trials + state.cfg.window_batches - 1) // state.cfg.window_batches)
+  replace = state.result_trials[occupied, cursor] >= batch_minimum
+  state.result_success[occupied[replace], cursor[replace]] = 0.
+  state.result_trials[occupied[replace], cursor[replace]] = 0.
+  state.result_success[occupied, cursor] += success[occupied]
+  state.result_trials[occupied, cursor] += trials[occupied]
+  state.result_cursor[occupied] += (state.result_trials[occupied, cursor] >= batch_minimum).long()
   frontier_cell = torch.arange(state.groups, device=env.device) * len(DIFFICULTIES) + state.frontier
   n = state.result_trials[frontier_cell].sum(dim=1)
   rate = state.result_success[frontier_cell].sum(dim=1) / n.clamp_min(1)

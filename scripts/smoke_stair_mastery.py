@@ -18,7 +18,7 @@ from scripts.evaluate_stairs import check_onnx
 from src.tasks.campus.skills import Phase, skill
 from src.tasks.campus.terrain import DIFFICULTIES
 from src.tasks.round_trip import mdp
-from src.tasks.round_trip.improved import adaptive_curriculum, descent_overspeed, next_footholds, speed_clock
+from src.tasks.round_trip.improved import adaptive_curriculum, controlled_transfer, descent_overspeed, next_footholds
 from src.tasks.round_trip.skills import Route
 from src.tasks.round_trip.terrain import COURSES, PACE_BANDS
 from src.tasks.stair_mastery import TASKS, mastery_env_cfg, mastery_runner_cfg
@@ -64,6 +64,17 @@ def curriculum_checks(env):
     adaptive_curriculum(env, ids)
     if state.frontier[0] != 0:
       raise AssertionError("64 failed trials did not demote the frontier")
+    state.result_trials.zero_()
+    state.result_success.zero_()
+    state.result_cursor.zero_()
+    state.terrain.terrain_levels[ids] = 0
+    state.success[ids] = True
+    for _ in range(64):
+      # One world finishes at a time: the common asynchronous rollout case.
+      state.terrain.terrain_levels[0] = 0
+      adaptive_curriculum(env, ids[:1])
+    if state.frontier[0] != 1:
+      raise AssertionError("Small asynchronous resets discarded promotion evidence")
     before = state.result_trials.clone()
     env.episode_length_buf[ids] = 0
     adaptive_curriculum(env, ids)
@@ -83,7 +94,8 @@ def curriculum_checks(env):
     env.termination_manager._terminated_buf[:] = terminated
     env.termination_manager._truncated_buf[:] = timeouts
     state.cfg.fixed_level = fixed
-  return ["rolling_promotion", "rolling_demotion", "initialization_excluded", "fixed_level_preserved"]
+  return ["rolling_promotion", "rolling_demotion", "asynchronous_evidence_accumulation",
+          "initialization_excluded", "fixed_level_preserved"]
 
 
 def phase_checks(env):
@@ -225,7 +237,28 @@ def phase_checks(env):
     if first_two.shape != (n, 8) or not (first_two[:, (3, 7)] == 1).all():
       raise AssertionError("Two planned footholds are missing")
     checks.append("two_valid_footholds")
+    setup(Route.DESCEND, Phase.TRANSFER)
+    force[:, 1] = 250.
+    quiet = controlled_transfer(env)
+    velocity[:, 2] = -1.
+    dropping = controlled_transfer(env)
+    if not (quiet > dropping).all():
+      raise AssertionError("Load-transfer reward ignored downward body motion")
+    checks.append("controlled_load_transfer")
+    setup(Route.ASCEND, Phase.FINISH)
+    state.cfg.expert = "ascent"
+    state.riser[:] = state.tiers[state.terrain.terrain_levels, 0].long()
+    _, edge, _, _, goal_z, *_ = state.targets()
+    position[:, 0] = origin[:, 0] + edge + .60
+    feet[:, :, 0] = origin[:, 0:1] + edge[:, None] + .30
+    feet[:, :, 2] = goal_z[:, None]
+    state.hold.fill_(5)
+    state.advance()
+    if not state.success.all():
+      raise AssertionError("Ascent expert did not stop after reaching the upper landing")
+    checks.append("ascent_expert_finish")
   finally:
+    state.cfg.expert = "round_trip"
     state.robot = original_robot
     state._feet = original_feet
     env.sim.data.subtree_com[:] = original_subtree
@@ -312,21 +345,30 @@ def main():
   for task, (expert, student) in TASKS.items():
     cfg = mastery_env_cfg(expert, student=student)
     cfg.seed = 72
-    cfg.scene.num_envs = 108
+    cfg.scene.num_envs = 324
+    cfg.curriculum = {}  # Explicit coverage assignments; test adaptation separately.
     # Smoke each geometry and level directly, without changing the curriculum definition.
     env = ManagerBasedRlEnv(cfg, device=args.device)
     try:
       state = skill(env)
-      levels = torch.arange(6, device=args.device).repeat_interleave(len(COURSES))
-      columns = torch.arange(len(COURSES), device=args.device).repeat(6)
+      cells = torch.tensor([(level, column, pace) for level in range(6)
+                            for column in range(len(COURSES)) for pace in range(3)], device=args.device)
+      levels, columns, paces = cells.unbind(dim=1)
       state.terrain.terrain_levels[:] = levels
       state.terrain.terrain_types[:] = columns
       state.terrain.env_origins[:] = state.terrain.terrain_origins[levels, columns]
+      state.speed_band[:] = paces
       state.cfg.fixed_level = None
       wrapped = RslRlVecEnvWrapper(env, clip_actions=3.0)
       observation = wrapped.get_observations()
-      if observation["actor"].shape != (108, 785) or observation["teacher"].shape != (108, 785):
+      if observation["actor"].shape != (324, 785) or observation["teacher"].shape != (324, 785):
         raise AssertionError(f"Unexpected actor/teacher shape for {task}")
+      if not torch.equal(state.terrain.terrain_levels, levels) or not torch.equal(state.speed_band, paces):
+        raise AssertionError("Wrapper reset changed explicit coverage assignments")
+      if expert != "round_trip":
+        expected_route = {"ascent": Route.ASCEND, "turn": Route.TURN, "descent": Route.DESCEND}[expert]
+        if not (state.route == expected_route).all():
+          raise AssertionError("Expert did not start in its assigned route stage")
       runner = MasteryRunner(wrapped, asdict(mastery_runner_cfg()), device=args.device)
       transfer = runner.initialize_actor(args.teacher_onnx)
       policy = runner.get_inference_policy(args.device)
@@ -343,7 +385,7 @@ def main():
       runner.write_run_audit(args.output / task, 0)
       dump_yaml(args.output / task / "env.yaml", asdict(cfg))
       report = {"task": task, "inference_steps": 12, "actor_width": 785,
-                "actor_transfer": transfer, "optimizer_steps": 0}
+                "actor_transfer": transfer, "optimizer_steps": 0, "coverage_cells": 324}
       if task == "Unitree-G1-EDU-Stair-Mastery":
         # A phase fixture uses the full-route mode for all controlled cases.
         state.cfg.expert = "round_trip"

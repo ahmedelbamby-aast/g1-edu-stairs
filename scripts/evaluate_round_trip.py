@@ -37,6 +37,9 @@ def evaluate(args):
   else:
     cfg = mastery_env_cfg(play=True, student=args.task.endswith("-Student"),
                           stress=args.suite == "stress", terrain_seed=args.terrain_seed)
+    # Evaluation assigns every cell explicitly. Adaptive reset sampling would
+    # otherwise replace those assignments even on the initial wrapper reset.
+    cfg.curriculum = {}
     agent = mastery_runner_cfg()
   cfg.seed = args.seed
   cfg.scene.num_envs = len(cells) * count
