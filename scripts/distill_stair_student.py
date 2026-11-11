@@ -5,6 +5,8 @@ import hashlib
 import json
 import os
 import subprocess
+import time
+from collections import defaultdict, deque
 from dataclasses import asdict
 from pathlib import Path
 
@@ -18,6 +20,8 @@ from src.tasks.campus.skills import skill
 from src.tasks.stair_mastery import mastery_env_cfg, mastery_runner_cfg
 from src.tasks.stair_mastery.distillation import ExpertPolicies, imitation_loss
 from src.tasks.stair_mastery.runner import MasteryRunner
+from src.tasks.stair_mastery.validation import ImitationValidator
+from scripts.training_metrics import atomic_json, export_run, queue, update_catalog
 
 
 def main():
@@ -33,9 +37,16 @@ def main():
   parser.add_argument("--learning-rate", type=float, default=.0001)
   parser.add_argument("--device", default="cuda:0")
   parser.add_argument("--check-only", action="store_true")
+  parser.add_argument("--validation-every", type=int, default=100)
+  parser.add_argument("--validation-envs", type=int, default=972)
+  parser.add_argument("--validation-steps", type=int, default=32)
+  parser.add_argument("--validation-seed", type=int, default=1913)
+  parser.add_argument("--validation-terrain-seed", type=int, default=79)
   args = parser.parse_args()
-  if min(args.steps, args.num_envs) < 1 or args.learning_rate <= 0:
+  if min(args.steps, args.num_envs, args.validation_every, args.validation_envs, args.validation_steps) < 1 or args.learning_rate <= 0:
     parser.error("Use positive steps, environment count and learning rate")
+  if args.seed == args.validation_seed or args.validation_terrain_seed == 41:
+    parser.error("Validation seeds and terrain must differ from training")
   # Training output must be a fresh directory so retries never overwrite a run.
   args.output.mkdir(parents=True, exist_ok=False)
   configure_torch_backends()
@@ -53,7 +64,13 @@ def main():
     "environment": {key: os.environ.get(key) for key in ("CUDA_VISIBLE_DEVICES", "OMP_NUM_THREADS", "WARP_CACHE_PATH")},
     "optimizer_steps": 0,
   }
+  started = time.time()
+  atomic_json(args.output / "experiment.json", {"experiment_id": args.output.name,
+              "data_kind": "check-only" if args.check_only else "imitation", "started_at": started,
+              "stage": "student", "seed": args.seed})
   env = ManagerBasedRlEnv(cfg, device=args.device)
+  validator = None
+  status = 1
   try:
     wrapped = RslRlVecEnvWrapper(env, clip_actions=agent.clip_actions)
     runner = MasteryRunner(wrapped, asdict(agent), str(args.output), args.device)
@@ -63,6 +80,9 @@ def main():
     teachers = ExpertPolicies((args.ascent, args.turn, args.descent), observation, asdict(agent.actor), args.device)
     actor = runner.alg.get_policy()
     actor.eval()
+    validator = ImitationValidator(actor, teachers, args.device, args.validation_envs,
+                                  args.validation_steps, args.validation_seed, args.validation_terrain_seed)
+    manifest["validation"] = validator.settings
     if args.check_only:
       with torch.no_grad():
         target = teachers.actions(observation, skill(env).route)
@@ -70,8 +90,27 @@ def main():
         if not torch.isfinite(loss):
           raise RuntimeError("Teacher/student loss is nonfinite")
         manifest["check_loss"] = float(loss)
+        manifest["validation_mse"] = validator.measure()
+        weights = {key: value.clone() for key, value in actor.state_dict().items()}
+        rng = torch.get_rng_state().clone()
+        cuda_rng = torch.cuda.get_rng_state(args.device).clone()
+        repeated = validator.measure()
+        if abs(repeated - manifest["validation_mse"]) > 1e-6:
+          raise RuntimeError("Fixed-seed validation did not reproduce its MSE")
+        if not torch.equal(torch.get_rng_state(), rng) or not torch.equal(torch.cuda.get_rng_state(args.device), cuda_rng):
+          raise RuntimeError("Validation changed training RNG streams")
+        if any(not torch.equal(value, weights[key]) for key, value in actor.state_dict().items()):
+          raise RuntimeError("Validation changed actor parameters or normalization")
+        manifest["validation_isolation"] = "passed"
+        atomic_json(args.output / "check-metrics.json", {"train_mse": float(loss),
+                    "validation_mse": manifest["validation_mse"], "optimizer_steps": 0})
     else:
       optimizer = torch.optim.Adam(actor.parameters(), lr=args.learning_rate)
+      returns = torch.zeros(env.num_envs, device=args.device)
+      lengths = torch.zeros_like(returns)
+      recent_rewards, recent_lengths = deque(maxlen=100), deque(maxlen=100)
+      metrics = defaultdict(list)
+      interval_start, interval_steps = time.time(), 0
       with (args.output / "imitation.jsonl").open("w", encoding="utf-8") as log:
         for step in range(args.steps):
           target = teachers.actions(observation, skill(env).route)
@@ -87,15 +126,46 @@ def main():
             mix = .75 - .60 * step / max(args.steps - 1, 1)
             use_teacher = torch.rand((env.num_envs, 1), device=args.device) < mix
             action = torch.where(use_teacher, target, actor(observation))
-            observation, _, _, _ = wrapped.step(action)
-          if step % 100 == 0:
-            log.write(json.dumps({"step": step, "mse": float(loss.detach()), "teacher_fraction": mix}) + "\n")
+            observation, reward, done, info = wrapped.step(action)
+            returns += reward
+            lengths += 1
+            finished = done.bool()
+            recent_rewards.extend(returns[finished].cpu().tolist())
+            recent_lengths.extend(lengths[finished].cpu().tolist())
+            returns[finished], lengths[finished] = 0., 0.
+            for key, value in info.get("log", {}).items():
+              metrics[key].append(float(torch.as_tensor(value).float().mean()))
+          interval_steps += env.num_envs
+          if (step + 1) % args.validation_every == 0 or step + 1 == args.steps:
+            # Account for rollout/optimization throughput separately from validation time.
+            fps = interval_steps / max(time.time() - interval_start, 1e-6)
+            validation_mse = validator.measure()
+            values = {key: sum(items) / len(items) for key, items in metrics.items()}
+            values.update({"Perf/total_fps": fps, "Loss/learning_rate": args.learning_rate})
+            if recent_rewards:
+              values["Train/mean_reward"] = sum(recent_rewards) / len(recent_rewards)
+              values["Train/mean_episode_length"] = sum(recent_lengths) / len(recent_lengths)
+            log.write(json.dumps({"step": step + 1, "wall_time": time.time(),
+                                 "elapsed_s": time.time() - started, "train_mse": float(loss.detach()),
+                                 "validation_mse": validation_mse, "teacher_fraction": mix,
+                                 "metrics": values}, allow_nan=False) + "\n")
             log.flush()
+            metrics.clear()
+            interval_start, interval_steps = time.time(), 0
       runner.save(str(args.output / "model_distilled.pt"), {"distillation": manifest})
       torch.save(optimizer.state_dict(), args.output / "imitation-optimizer.pt")
+    status = 0
   finally:
+    if validator is not None:
+      validator.close()
     env.close()
     (args.output / "distillation.json").write_text(json.dumps(manifest, indent=2) + "\n", encoding="utf-8")
+    (args.output / "git-commit.txt").write_text(manifest["source_commit"] + "\n", encoding="utf-8")
+    (args.output / "exit-code.txt").write_text(str(status) + "\n", encoding="utf-8")
+    export_run(args.output)
+    queue(args.output)
+    if not args.check_only:
+      update_catalog(args.output.parent)
 
 
 if __name__ == "__main__":

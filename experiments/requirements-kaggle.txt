@@ -11,3 +11,4 @@ tyro==1.0.17
 warp-lang==1.12.1
 onnxruntime==1.31.1
 tensorboard==2.21.0
+matplotlib==3.11.2

@@ -14,6 +14,8 @@ export WARP_CACHE_PATH="$XDG_CACHE_HOME/warp"
 export LD_LIBRARY_PATH="/usr/local/nvidia/lib64${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}"
 export MUJOCO_GL="${MUJOCO_GL:-egl}"
 export PYTHONUNBUFFERED=1
+export TZ=UTC
+export MPLCONFIGDIR="$scratch/cache/matplotlib"
 export PYTHONPATH="$repo${PYTHONPATH:+:$PYTHONPATH}"
 mkdir -p "$TMPDIR" "$WARP_CACHE_PATH"
 
@@ -91,10 +93,20 @@ finish() {
     wait "$gpu_monitor" 2>/dev/null || true
   fi
   printf '%s\n' "$status" > "$run_dir/exit-code.txt"
+  if [[ "${STAIRS_DEFER_REPORT:-0}" != 1 || "$status" != 0 ]]; then
+    if ! .venv/bin/python -m scripts.training_metrics export --run "$run_dir" --queue \
+        >> "$run_dir/metrics-export.log" 2>&1; then
+      echo "Metric export failed; see $run_dir/metrics-export.log" >&2
+      if [[ "$status" == 0 ]]; then status=95; fi
+      printf '%s\n' "$status" > "$run_dir/exit-code.txt"
+    fi
+  fi
+  exit "$status"
 }
 trap finish EXIT
 cp "$profile" "$run_dir/profile.env"
 git rev-parse HEAD > "$run_dir/git-commit.txt"
+.venv/bin/python -c 'import os,sys,time; from pathlib import Path; from scripts.training_metrics import atomic_json; p=Path(sys.argv[1]); atomic_json(p / "experiment.json", {"experiment_id":os.environ.get("STAIRS_EXPERIMENT_ID",p.name),"stage":os.environ.get("STAIRS_STAGE",os.environ.get("STAIRS_TASK","stairs")),"seed":int(sys.argv[2]),"start_update":int(os.environ.get("STAIRS_START_UPDATE",0)),"end_update":int(os.environ.get("STAIRS_END_UPDATE",sys.argv[3])),"started_at":time.time(),"data_kind":"training"})' "$run_dir" "$SEED" "$ITERATIONS"
 uv pip freeze --exclude-editable > "$run_dir/requirements.txt"
 nvidia-smi --query-gpu=name,memory.total,driver_version --format=csv > "$run_dir/gpus.csv"
 printf 'cpu_threads=%s\nnum_cpus=%s\nnccl_p2p_disable=%s\n' \

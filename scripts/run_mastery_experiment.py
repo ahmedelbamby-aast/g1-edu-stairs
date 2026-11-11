@@ -4,7 +4,10 @@ import argparse
 import json
 import os
 import subprocess
+import time
 from pathlib import Path
+
+from scripts.training_metrics import atomic_json, compare, export_run, queue, update_catalog
 
 STAGES = {
   "ascent": "Unitree-G1-EDU-Stair-Expert-Ascent",
@@ -40,32 +43,58 @@ def main():
   if args.plan_only:
     return
   root = Path(os.environ.get("STAIRS_RESULTS", "/kaggle/working/g1-edu-stairs"))
+  report = root / f"{args.run_id}-report"
+  report.mkdir(parents=True, exist_ok=False)
+  commit = subprocess.check_output(["git", "rev-parse", "HEAD"], text=True).strip()
+  (report / "git-commit.txt").write_text(commit + "\n", encoding="utf-8")
+  atomic_json(report / "experiment.json", {"experiment_id": args.run_id, "stage": args.stage,
+              "seed": args.seed, "planned_updates": args.updates, "started_at": time.time(),
+              "data_kind": "experiment-comparison"})
   remaining = args.updates
   checkpoint = args.resume_checkpoint
   completed = 0
+  segments = []
   while remaining:
     updates = min(remaining, args.evaluate_every)
     run_id = f"{args.run_id}-u{completed + updates:04d}"
     environment = {**os.environ, "STAIRS_TASK": STAGES[args.stage],
-                   "ITERATIONS": str(updates), "SEED": str(args.seed)}
+                   "ITERATIONS": str(updates), "SEED": str(args.seed),
+                   "STAIRS_EXPERIMENT_ID": args.run_id, "STAIRS_START_UPDATE": str(completed),
+                   "STAIRS_END_UPDATE": str(completed + updates), "STAIRS_STAGE": args.stage,
+                   "STAIRS_DEFER_REPORT": "1"}
     initialization = (
       ["--resume-checkpoint", str(checkpoint)] if checkpoint else
       ["--init-actor-onnx", str(args.init_actor_onnx)]
     )
-    subprocess.run(["bash", "scripts/run_kaggle_mastery.sh", run_id, *initialization],
-                   env=environment, check=True)
-    checkpoints = list((root / run_id).rglob("model_*.pt"))
-    checkpoint = max(checkpoints, key=lambda p: int(p.stem.split("_")[-1]))
-    for suite in ("clean", "stress"):
-      task = "Unitree-G1-EDU-Stair-Student" if args.stage == "student" else STAGES["round_trip"]
-      subprocess.run([
-        "bash", "scripts/kaggle_stairs.sh", "evaluate-round-trip", "--task", task,
-        "--checkpoint", str(checkpoint), "--onnx", str(checkpoint.parent / "policy.onnx"),
-        "--suite", suite, "--episodes-per-cell", str(args.episodes_per_cell),
-        "--output", str(root / run_id / f"eval-{suite}.json"),
-      ], check=True)
+    status = 1
+    try:
+      subprocess.run(["bash", "scripts/run_kaggle_mastery.sh", run_id, *initialization],
+                     env=environment, check=True)
+      checkpoints = list((root / run_id).rglob("model_*.pt"))
+      checkpoint = max(checkpoints, key=lambda p: int(p.stem.split("_")[-1]))
+      for suite in ("clean", "stress"):
+        subprocess.run([
+          "bash", "scripts/kaggle_stairs.sh", "evaluate-round-trip", "--task", STAGES[args.stage],
+          "--checkpoint", str(checkpoint), "--onnx", str(checkpoint.parent / "policy.onnx"),
+          "--suite", suite, "--episodes-per-cell", str(args.episodes_per_cell),
+          "--output", str(root / run_id / f"eval-{suite}.json"),
+        ], check=True)
+      status = 0
+    finally:
+      segment = root / run_id
+      if segment.exists():
+        segments.append(segment)
+        (segment / "workflow-exit-code.txt").write_text(str(status) + "\n", encoding="utf-8")
+        export_run(segment)
+        queue(segment)
+        compare(segments, report / "metrics")
+        (report / "exit-code.txt").write_text(str(status) + "\n", encoding="utf-8")
+        queue(report)
+        update_catalog(root)
     remaining -= updates
     completed += updates
+  atomic_json(report / "workflow-finished.json", {"completed_updates": completed, "wall_time": time.time(), "status": "complete"})
+  queue(report)
 
 
 if __name__ == "__main__":

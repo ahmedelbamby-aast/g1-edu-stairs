@@ -45,6 +45,16 @@ try {
   Move-Item -Force -LiteralPath $checksumPath -Destination $backup
   $bundlePath = Join-Path $backup $archive
   $checksumPath = "$bundlePath.sha256"
+  $metricAsset = $null
+  $members = @(tar -tzf $bundlePath)
+  if ($LASTEXITCODE -ne 0) { throw 'Could not inspect the verified archive.' }
+  if ($members -contains "$RunId/metrics-report.zip") {
+    tar -xzf $bundlePath -C $staging "$RunId/metrics-report.zip"
+    if ($LASTEXITCODE -ne 0) { throw 'Could not extract the metrics report.' }
+    $metricAsset = Join-Path $backup "$RunId-metrics.zip"
+    Move-Item -Force -LiteralPath (Join-Path $staging "$RunId/metrics-report.zip") -Destination $metricAsset
+    Remove-Item -LiteralPath (Join-Path $staging $RunId)
+  }
   if ($LocalOnly) {
     Write-Output $bundlePath
     return
@@ -55,9 +65,11 @@ try {
     throw 'The origin remote must point to a GitHub repository.'
   }
   $githubRepo = $Matches[2]
+  $assets = @($bundlePath, $checksumPath)
+  if ($metricAsset) { $assets += $metricAsset }
   gh api "repos/$githubRepo/releases/tags/$tag" --silent 2>$null
   if ($LASTEXITCODE -eq 0) {
-    gh release upload $tag $bundlePath $checksumPath --repo $githubRepo --clobber
+    gh release upload $tag @assets --repo $githubRepo --clobber
   } else {
     $title = "G1 EDU stairs | $RunId"
     $notes = if ($Checkpoint) {
@@ -65,7 +77,7 @@ try {
     } else {
       "Run configuration, logs, checkpoints, ONNX export and evaluation produced on Kaggle. Source commit $commit."
     }
-    gh release create $tag $bundlePath $checksumPath --repo $githubRepo --target $commit --title $title --latest=false --notes $notes
+    gh release create $tag @assets --repo $githubRepo --target $commit --title $title --latest=false --notes $notes
   }
   if ($LASTEXITCODE -ne 0) { throw "GitHub upload failed for $RunId." }
   gh release view $tag --repo $githubRepo --json url --jq .url
