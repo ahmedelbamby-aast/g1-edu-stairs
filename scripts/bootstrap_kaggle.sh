@@ -14,8 +14,10 @@ if ! ldconfig -p | awk '/libOSMesa\.so/ { found=1 } END { exit !found }'; then
   packages+=(libosmesa6)
 fi
 if (( ${#packages[@]} )); then
-  apt-get update
-  apt-get install -y --no-install-recommends "${packages[@]}"
+  if ! apt-get -o Acquire::Retries=1 -o Acquire::https::Timeout=20 install -y --no-install-recommends "${packages[@]}"; then
+    apt-get -o Acquire::Retries=1 -o Acquire::https::Timeout=20 update
+    apt-get install -y --no-install-recommends "${packages[@]}"
+  fi
 fi
 
 if ! command -v uv >/dev/null; then
