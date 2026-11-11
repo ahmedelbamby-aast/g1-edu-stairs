@@ -87,6 +87,8 @@ def evaluate(args):
         break
     if not done_before.all():
       raise RuntimeError("Some round-trip trials did not terminate")
+    if (completed & ~turned).any() or (turned & ~top).any():
+      raise RuntimeError("A trial advanced without completing the preceding route phase")
     speed_match = ((actual - target[:, None]).abs() <= command.speed_tolerance * target[:, None])
     speed_match = completed & (speed_match & (measured > 0)).all(dim=1)
     labels = tuple(PACE_BANDS)
@@ -102,7 +104,7 @@ def evaluate(args):
         "speed_band": labels[speed], "episodes": count, "top_landings": int(top[sample].sum()),
         "turns": int(turned[sample].sum()), "completed_round_trips": n,
         "completed_at_target_pace_both_directions": int(speed_match[sample].sum()),
-        "clockwise_attempts": int((turn_side[sample] < 0).sum()),
+        "clockwise_trials": int((turn_side[sample] < 0).sum()),
         "clockwise_turns_completed": int(((turn_side[sample] < 0) & turned[sample]).sum()),
         "counterclockwise_turns_completed": int(((turn_side[sample] > 0) & turned[sample]).sum()),
         "falls": int(falls[sample].sum()), "lane_exits": int(exits[sample].sum()),
