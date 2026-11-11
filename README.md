@@ -5,6 +5,9 @@ and descending procedural stairs. The [training report](doc/training-report.md)
 explains the setup and includes course screenshots. See the [Kaggle recovery guide](doc/kaggle-recovery.md)
 for startup and backups, and the [experiment index](experiments/README.md) for results.
 
+The [campus stairs curriculum](doc/campus-sim2real.md) adds single-leg balance,
+contact-based step phases, six campus stair families, and simulation acceptance tests.
+
 
 ## ✳️ Overview
 Unitree RL Mjlab is a reinforcement learning project built upon the
