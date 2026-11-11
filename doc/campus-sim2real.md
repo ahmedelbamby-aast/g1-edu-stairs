@@ -70,6 +70,8 @@ Run the evaluator twice with `--suite clean` and `--suite stress`. It uses held-
 
 On the two-T4 Kaggle machine, `bash scripts/evaluate_kaggle_campus.sh campus-001` runs both suites against the final checkpoint and saves both resolved evaluation configurations.
 
+For dedicated balance training, `bash scripts/run_kaggle_balance_pair.sh balance-001 /absolute/path/to/model_N.pt` starts one job per leg, with one T4 per job. Each job resumes from the combined checkpoint, adds a reward for a continuous stable hold, and runs clean and stress tests for its own leg. The combined checkpoint remains a separate policy.
+
 ```bash
 bash scripts/kaggle_stairs.sh evaluate-campus --suite stress \
   --checkpoint /absolute/path/to/model_N.pt --onnx /absolute/path/to/policy.onnx \
@@ -79,6 +81,21 @@ bash scripts/kaggle_stairs.sh evaluate-campus --suite stress \
 ## What every run records
 
 The run directory contains the exact launch command, profile, source commit, package versions, GPU telemetry, resolved environment and PPO settings, seeds, and the teacher or resume checkpoint checksum. The audit directory records the realized edges and heights of all 72 stair courses. Each GPU saves its startup physics values, initial poses and course assignments, and its effective process settings. TensorBoard records progress through the phases and outcomes for each drill. The evaluation JSON includes a separate count for each phase reached, completed risers and longest single-support hold by test cell. Per-tick random draws are driven by the recorded seeds and ranges.
+
+## Combined-policy pilot results
+
+The pilot resumed from update 100 and trained for 120 more updates after adding a controlled stop on the final landing. Each held-out suite ran 1,248 episodes, with eight trials for each of 156 cells.
+
+| Skill | Clean completions | Stress completions |
+| --- | ---: | ---: |
+| Left-leg balance | 0/48 | 2/48 |
+| Right-leg balance | 16/48 | 9/48 |
+| Isolated step up | 279/288 | 253/288 |
+| Isolated step down | 261/288 | 266/288 |
+| Full flight up | 154/288 | 121/288 |
+| Full flight down | 130/288 | 129/288 |
+
+The combined policy passed 76 of 156 clean cells and 63 of 156 stress cells. At the hardest stress level it completed 1 of 48 ascents and 0 of 48 descents. It did not pass the simulation acceptance gate. The clean and stress suites used the same six design families, a different placement seed from training, and different episode draws. [Resolved settings and evaluation results](../experiments/results/campus-refine-s42/)
 
 ## Physical G1 EDU integration
 
