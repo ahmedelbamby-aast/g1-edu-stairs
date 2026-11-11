@@ -1,0 +1,1 @@
+.venv/bin/python -m scripts.train Unitree-G1-EDU-Stair-Round-Trip --gpu-ids \[0\,1\] --env.scene.num-envs 1080 --agent.seed 42 --agent.max-iterations 160 --agent.save-interval 20 --randomize-initial-episode-length False --init-actor-onnx /kaggle/working/g1-edu-stairs/campus-refine-s42/g1_edu_campus/2026-11-11_13-48-54/policy.onnx

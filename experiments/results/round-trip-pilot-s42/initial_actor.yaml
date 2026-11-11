@@ -1,0 +1,5 @@
+source: policy.onnx
+source_sha256: 3946423695959e59cb4674a7f03d89c5296f4221f1fac9463f687e1a3fdd8135
+onnx_max_abs_error: 8.344650268554688e-07
+exploration_std: 0.28
+normalization_prior_samples: 262144

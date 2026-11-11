@@ -43,3 +43,14 @@ six stair families, and a held-out test for each level and skill.
 | [Campus refinement full run](https://github.com/ahmedelbamby-aast/g1-edu-stairs/releases/tag/run-campus-refine-s42) | Combined policy, complete audit, and 156-cell clean and stress tests. It completed 519/576 isolated steps and 250/576 full flights under stress. |
 | [Left-leg balance](https://github.com/ahmedelbamby-aast/g1-edu-stairs/releases/tag/run-campus-balance-left) | Independent specialist checkpoint, audit and evaluation for the left support leg. |
 | [Right-leg balance](https://github.com/ahmedelbamby-aast/g1-edu-stairs/releases/tag/run-campus-balance-right) | Independent specialist checkpoint, audit and evaluation for the right support leg. |
+
+## Round-trip stairs
+
+The [round-trip task](../doc/round-trip-stairs.md) trains ascent, a turn on the upper
+landing, and descent on the same treads. The startup audit verifies full-route
+practice in all 324 family, depth, speed and difficulty combinations on each GPU.
+
+| Run | Evidence |
+| --- | --- |
+| [Round-trip smoke test](https://github.com/ahmedelbamby-aast/g1-edu-stairs/releases/tag/run-round-trip-smoke-s42) | Two-GPU PPO and verified actor transfer. |
+| [Round-trip pilot recovery copy](https://github.com/ahmedelbamby-aast/g1-edu-stairs/releases/tag/run-round-trip-pilot-s42-checkpoint) | Saved checkpoint and run audit. [Resolved settings](results/round-trip-pilot-s42/) |
