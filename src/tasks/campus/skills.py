@@ -49,6 +49,7 @@ class CampusSkillCfg(CommandTermCfg):
   load_fraction: float = .55
   transfer_s: float = .06
   finish_s: float = .10
+  drill_timeout_s: float = 8.0
   lane_margin_m: float = .16
 
   def build(self, env):
@@ -104,6 +105,9 @@ class CampusSkill(CommandTerm):
     self.success = torch.zeros_like(self.balance)
     self.transition = torch.zeros_like(self.balance)
     self.reached = torch.zeros((self.num_envs, len(Phase)), device=self.device, dtype=torch.bool)
+    self.last_reached = torch.zeros_like(self.reached)
+    self.last_risers = torch.zeros_like(self.riser)
+    self.last_hold = torch.zeros_like(self.max_hold)
 
   def _resample_command(self, env_ids):
     self.phase[env_ids] = torch.where(self.flight[env_ids], Phase.APPROACH, Phase.SHIFT)
@@ -123,6 +127,9 @@ class CampusSkill(CommandTerm):
     pass
 
   def reset(self, env_ids):
+    self.last_reached[env_ids] = self.reached[env_ids]
+    self.last_risers[env_ids] = self.riser[env_ids]
+    self.last_hold[env_ids] = self.max_hold[env_ids]
     reached = self.reached[env_ids].float()
     extras = {f"reached_{p.name.lower()}": reached[:, p].mean().item() for p in Phase}
     extras["completed_risers"] = self.riser[env_ids].float().mean().item()
@@ -174,7 +181,7 @@ class CampusSkill(CommandTerm):
     supported = found[self.ids, self.support] & (force[self.ids, self.support] >= self.cfg.support_force_n)
     air = ~found[self.ids, 1 - self.support]
     load = force[self.ids, self.support] / force.sum(dim=1).clamp_min(1.0)
-    goal, edge, next_edge, start_z, goal_z, count, width, hold_s, lift = self.targets()
+    _, edge, next_edge, start_z, goal_z, count, width, hold_s, lift = self.targets()
     upright = self.robot.data.projected_gravity_b[:, 2] < -.87
     swing_x = swing[:, 0] - origin[:, 0]
     near_support = (com[:, 1] - support_xyz[:, 1]).abs() < .09

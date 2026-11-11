@@ -61,6 +61,12 @@ def lane_exit(env):
   return (root[:, 1].abs() > limit) | (root[:, 0] < -.40) | (root[:, 0] > TILE_SIZE[0] - SPAWN_X - .22)
 
 
+def timeout(env):
+  state = skill(env)
+  drill_over = env.episode_length_buf * env.step_dt >= state.cfg.drill_timeout_s
+  return common.time_out(env) | (~state.flight & drill_over)
+
+
 def practice_reward(env):
   state = skill(env)
   phase = state.phase
