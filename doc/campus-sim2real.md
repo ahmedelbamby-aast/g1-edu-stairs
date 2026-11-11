@@ -78,7 +78,7 @@ bash scripts/kaggle_stairs.sh evaluate-campus --suite stress \
 
 ## What every run records
 
-The run directory contains the exact launch command, profile, source commit, package versions, GPU telemetry, resolved environment and PPO settings, seeds, and teacher checksum. The audit directory records the realized edges and heights of all 72 stair courses. Each GPU saves its startup physics values, initial poses and course assignments, and its effective process settings. TensorBoard records progress through the phases and outcomes for each drill. The evaluation JSON includes a separate count for each phase reached, completed risers and longest single-support hold by test cell. Per-tick random draws are driven by the recorded seeds and ranges.
+The run directory contains the exact launch command, profile, source commit, package versions, GPU telemetry, resolved environment and PPO settings, seeds, and the teacher or resume checkpoint checksum. The audit directory records the realized edges and heights of all 72 stair courses. Each GPU saves its startup physics values, initial poses and course assignments, and its effective process settings. TensorBoard records progress through the phases and outcomes for each drill. The evaluation JSON includes a separate count for each phase reached, completed risers and longest single-support hold by test cell. Per-tick random draws are driven by the recorded seeds and ranges.
 
 ## Physical G1 EDU integration
 

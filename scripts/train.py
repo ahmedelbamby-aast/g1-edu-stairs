@@ -1,5 +1,6 @@
 """Script to train RL agent with RSL-RL."""
 
+import hashlib
 import logging
 import os
 import sys
@@ -134,6 +135,12 @@ def run_train(task_id: str, cfg: TrainConfig, log_dir: Path) -> None:
   if resume_path is not None:
     print(f"[INFO]: Loading model checkpoint from: {resume_path}")
     runner.load(str(resume_path), map_location=device)
+    if rank == 0:
+      with resume_path.open("rb") as checkpoint:
+        digest = hashlib.file_digest(checkpoint, "sha256").hexdigest()
+      dump_yaml(log_dir / "params" / "resume.yaml", {
+        "checkpoint": str(resume_path), "sha256": digest,
+      })
   if cfg.init_actor_onnx is not None:
     path = Path(cfg.init_actor_onnx).expanduser().resolve(strict=True)
     initialize_actor = getattr(runner, "initialize_actor", None)
