@@ -31,6 +31,61 @@ def finite(observation):
     raise AssertionError("An observation contains NaN or infinity")
 
 
+def curriculum_checks(env):
+  state = skill(env)
+  names = ("frontier", "result_success", "result_trials", "result_cursor", "speed_band",
+           "start_mode", "success", "curriculum_rate", "curriculum_trials")
+  saved = {name: getattr(state, name).clone() for name in names}
+  terrain_levels = state.terrain.terrain_levels.clone()
+  terrain_columns = state.terrain.terrain_types.clone()
+  lengths = env.episode_length_buf.clone()
+  terminated = env.termination_manager._terminated_buf.clone()
+  timeouts = env.termination_manager._truncated_buf.clone()
+  fixed = state.cfg.fixed_level
+  ids = torch.arange(64, device=env.device)
+  try:
+    state.cfg.fixed_level = None
+    state.frontier.zero_()
+    state.result_trials.zero_()
+    state.result_success.zero_()
+    state.result_cursor.zero_()
+    state.speed_band[ids] = 0
+    state.start_mode[ids] = Route.ASCEND
+    state.terrain.terrain_types[ids] = 0
+    state.terrain.terrain_levels[ids] = 0
+    env.episode_length_buf[ids] = 1
+    env.termination_manager._terminated_buf[ids] = True
+    state.success[ids] = True
+    adaptive_curriculum(env, ids)
+    if state.frontier[0] != 1 or not torch.isfinite(state.curriculum_rate).all():
+      raise AssertionError("64 successful trials did not promote the frontier")
+    state.terrain.terrain_levels[ids] = 1
+    state.success[ids] = False
+    adaptive_curriculum(env, ids)
+    if state.frontier[0] != 0:
+      raise AssertionError("64 failed trials did not demote the frontier")
+    before = state.result_trials.clone()
+    env.episode_length_buf[ids] = 0
+    adaptive_curriculum(env, ids)
+    if not torch.equal(before, state.result_trials):
+      raise AssertionError("An initial reset was counted as a failed trial")
+    state.cfg.fixed_level = 5
+    adaptive_curriculum(env, ids)
+    if not (state.terrain.terrain_levels[ids] == 5).all():
+      raise AssertionError("Fixed-level evaluation changed levels")
+  finally:
+    for name, value in saved.items():
+      getattr(state, name).copy_(value)
+    state.terrain.terrain_levels[:] = terrain_levels
+    state.terrain.terrain_types[:] = terrain_columns
+    state.terrain.env_origins[:] = state.terrain.terrain_origins[terrain_levels, terrain_columns]
+    env.episode_length_buf[:] = lengths
+    env.termination_manager._terminated_buf[:] = terminated
+    env.termination_manager._truncated_buf[:] = timeouts
+    state.cfg.fixed_level = fixed
+  return ["rolling_promotion", "rolling_demotion", "initialization_excluded", "fixed_level_preserved"]
+
+
 def phase_checks(env):
   """Controlled contact/pose fixtures exercise the same phase code used in simulation."""
   state = skill(env)
@@ -132,7 +187,7 @@ def phase_checks(env):
       position[:, 0] = origin[:, 0] + (edge + .60) * state.forward_sign
       feet[:, :, 0] = origin[:, 0:1] + (edge[:, None] + .30) * state.forward_sign[:, None]
       feet[:, :, 2] = goal_z[:, None]
-      state.hold.fill_(4)
+      state.hold.fill_(5)
       state.advance()
       if route == Route.ASCEND:
         if not (state.route == Route.TURN).all():
@@ -151,7 +206,7 @@ def phase_checks(env):
       state.turn_side.fill_(direction)
       state.turn_angle.fill_(direction * pi)
       state.turn_yaw.fill_(direction * pi)
-      state.turn_hold.fill_(4)
+      state.turn_hold.fill_(5)
       state.advance()
       if not state.turned.all() or not (state.route == Route.DESCEND).all():
         raise AssertionError("Turn completion failed")
@@ -296,6 +351,7 @@ def main():
         state.terrain.terrain_types[:] = columns
         state.terrain.env_origins[:] = state.terrain.terrain_origins[levels, columns]
         report["phases"] = phase_checks(env)
+        report["curriculum"] = curriculum_checks(env)
         runner.export_policy_to_onnx(str(args.output / task), "smoke-only.onnx")
         observation = wrapped.get_observations()
         with torch.no_grad():
@@ -310,6 +366,12 @@ def main():
           if not torch.isfinite(loss):
             raise AssertionError("Imitation forward pass is nonfinite")
           report["imitation_forward_loss"] = float(loss)
+        _, _ = env.reset(env_ids=torch.tensor([0], device=args.device))
+        reset_observation = wrapped.get_observations()
+        history = reset_observation["actor"][0, -475:].view(5, 95)
+        if not torch.allclose(history, history[0:1].expand_as(history)):
+          raise AssertionError("History from the previous episode leaked through reset")
+        report["history_reset"] = "passed"
       reports.append(report)
     finally:
       env.close()
