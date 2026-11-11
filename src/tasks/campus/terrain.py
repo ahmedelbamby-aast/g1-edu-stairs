@@ -107,13 +107,15 @@ def campus_terrain(seed: int) -> TerrainGeneratorCfg:
   )
 
 
-def terrain_manifest(seed: int) -> dict:
+def terrain_manifest(seed: int, column_seeds: list[int] | None = None) -> dict:
+  column_seeds = column_seeds or [seed] * len(COURSES)
   courses = []
   for level, tier in enumerate(DIFFICULTIES):
     for column, name in enumerate(COURSES):
-      edges, heights = course_layout(seed, level, column)
+      edges, heights = course_layout(column_seeds[column], level, column)
       courses.append({
         "course": name, "level": level, "settings": asdict(tier),
         "edge_x_m_from_tile_start": edges.tolist(), "surface_z_m": heights.tolist(),
       })
-  return {"seed": seed, "designs": [asdict(d) for d in DESIGNS], "courses": courses}
+  return {"seed": seed, "column_seeds": column_seeds,
+          "designs": [asdict(d) for d in DESIGNS], "courses": courses}

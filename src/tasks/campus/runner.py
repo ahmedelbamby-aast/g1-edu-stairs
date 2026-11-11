@@ -5,6 +5,7 @@ import os
 from pathlib import Path
 
 import numpy as np
+from mjlab.rl.exporter_utils import get_base_metadata
 
 from src.tasks.stairs.runner import OBSERVATION_PREFIX, StairsOnPolicyRunner
 
@@ -54,5 +55,21 @@ class CampusRunner(StairsOnPolicyRunner):
     if rank == 0:
       terrain = env.cfg.scene.terrain.terrain_generator
       (directory / "terrain.json").write_text(
-        json.dumps(terrain_manifest(terrain.seed), indent=2) + "\n", encoding="utf-8"
+        json.dumps(terrain_manifest(terrain.seed, [tile.seed for tile in terrain.sub_terrains.values()]), indent=2) + "\n",
+        encoding="utf-8",
       )
+      contract = {
+        "version": 1,
+        "control_period_s": env.step_dt,
+        "actor_terms_in_order": dict(zip(self.observation_layout, (3, 3, 3, 2, 29, 29, 29, 63, 19), strict=True)),
+        "skill_terms_in_order": {
+          "phase_one_hot": metadata["phases"], "support_one_hot": ["left", "right"],
+          "foothold_minus_swing_site_m": ["heading_x", "heading_y", "vertical_z"],
+          "contact_flags": ["left", "right"], "drill_one_hot": metadata["drills"],
+        },
+        "terrain_scan": {"shape_yx": [7, 9], "spacing_m": .20, "height_offset_m": .80, "missing_value": 1.70},
+        "raw_action_clip": self.env.clip_actions,
+        "control": "default_joint_pos + action_scale * clipped_action",
+        "unitree": get_base_metadata(env, "g1_edu_campus"),
+      }
+      (directory / "sim2real-contract.json").write_text(json.dumps(contract, indent=2) + "\n", encoding="utf-8")
