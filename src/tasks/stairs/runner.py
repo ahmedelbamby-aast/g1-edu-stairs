@@ -18,7 +18,7 @@ PRIOR_SAMPLES = 262_144
 
 class StairsOnPolicyRunner(VelocityOnPolicyRunner):
   observation_layout = (*OBSERVATION_PREFIX, "height_scan")
-  teacher_layouts = (OBSERVATION_PREFIX,)
+  teacher_sizes = {OBSERVATION_PREFIX: 98}
 
   def save(self, path: str, infos=None) -> None:
     # Only expose checkpoint files after the write and matching export finish.
@@ -36,7 +36,7 @@ class StairsOnPolicyRunner(VelocityOnPolicyRunner):
     source = {entry.key: entry.value for entry in model.metadata_props}
     current = get_base_metadata(self.env.unwrapped, "stairs")
     source_layout = tuple(source["observation_names"].split(","))
-    if source_layout not in self.teacher_layouts:
+    if source_layout not in self.teacher_sizes:
       raise ValueError("The source ONNX observation layout is not supported by this task")
     if tuple(current["observation_names"]) != self.observation_layout:
       raise ValueError("The task's observation layout changed")
@@ -54,7 +54,7 @@ class StairsOnPolicyRunner(VelocityOnPolicyRunner):
     actor = self.alg.get_policy()
     state = actor.state_dict()
     source_mean = arrays["obs_normalizer._mean"]
-    prefix_size = 11 + 3 * self.env.num_actions + (63 if "height_scan" in source_layout else 0)
+    prefix_size = self.teacher_sizes[source_layout]
     if source_mean.shape != (1, prefix_size):
       raise ValueError("Unexpected Unitree flat actor input size")
 

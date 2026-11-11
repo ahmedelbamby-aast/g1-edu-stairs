@@ -122,20 +122,24 @@ def sustained_hold_reward(env):
   return ((state.phase == Phase.HOLD) & (state.hold > 0)).float() + progress * (state.phase == Phase.HOLD)
 
 
-def course_curriculum(env, env_ids):
-  state = skill(env)
-  terrain = state.terrain
-  levels = terrain.terrain_levels[env_ids]
-  columns = terrain.terrain_types[env_ids]
-  success = state.success[env_ids]
-  finished = env.termination_manager.dones[env_ids]
+def next_levels(state, env_ids, finished, success):
+  levels = state.terrain.terrain_levels[env_ids]
   streak = state.streak[env_ids]
   streak = torch.where(finished & success, streak.clamp_min(0) + 1, streak)
   streak = torch.where(finished & ~success, streak.clamp_max(0) - 1, streak)
   promote = streak >= state.cfg.promote_after
   demote = streak <= -state.cfg.demote_after
   state.streak[env_ids] = torch.where(promote | demote, 0, streak)
-  levels = (levels + promote.long() - demote.long()).clamp(0, len(DIFFICULTIES) - 1)
+  return (levels + promote.long() - demote.long()).clamp(0, len(DIFFICULTIES) - 1)
+
+
+def course_curriculum(env, env_ids):
+  state = skill(env)
+  terrain = state.terrain
+  columns = terrain.terrain_types[env_ids]
+  success = state.success[env_ids]
+  finished = env.termination_manager.dones[env_ids]
+  levels = next_levels(state, env_ids, finished, success)
   if state.cfg.fixed_level is not None:
     levels.fill_(state.cfg.fixed_level)
   if state.cfg.fixed_column is not None:

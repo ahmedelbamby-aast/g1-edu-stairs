@@ -21,7 +21,17 @@ RUNTIME_KEYS = (
 
 class CampusRunner(StairsOnPolicyRunner):
   observation_layout = (*StairsOnPolicyRunner.observation_layout, "skill")
-  teacher_layouts = (OBSERVATION_PREFIX, StairsOnPolicyRunner.observation_layout)
+  observation_sizes = (3, 3, 3, 2, 29, 29, 29, 63, 19)
+  teacher_sizes = {**StairsOnPolicyRunner.teacher_sizes, StairsOnPolicyRunner.observation_layout: 161}
+
+  def terrain_audit(self, terrain):
+    return terrain_manifest(terrain.seed, [tile.seed for tile in terrain.sub_terrains.values()])
+
+  def extra_audit_arrays(self, state):
+    return {}
+
+  def extra_contract(self):
+    return {}
 
   def write_run_audit(self, log_dir: Path, rank: int) -> None:
     env = self.env.unwrapped
@@ -38,6 +48,7 @@ class CampusRunner(StairsOnPolicyRunner):
       drill=state.drill.cpu().numpy(),
       support=state.support.cpu().numpy(),
     )
+    arrays.update(self.extra_audit_arrays(state))
     np.savez_compressed(directory / f"startup-rank-{rank}.npz", **arrays)
     metadata = {
       "rank": rank, "seed": env.cfg.seed, "device": env.device, "worlds": env.num_envs,
@@ -55,13 +66,13 @@ class CampusRunner(StairsOnPolicyRunner):
     if rank == 0:
       terrain = env.cfg.scene.terrain.terrain_generator
       (directory / "terrain.json").write_text(
-        json.dumps(terrain_manifest(terrain.seed, [tile.seed for tile in terrain.sub_terrains.values()]), indent=2) + "\n",
+        json.dumps(self.terrain_audit(terrain), indent=2) + "\n",
         encoding="utf-8",
       )
       contract = {
         "version": 1,
         "control_period_s": env.step_dt,
-        "actor_terms_in_order": dict(zip(self.observation_layout, (3, 3, 3, 2, 29, 29, 29, 63, 19), strict=True)),
+        "actor_terms_in_order": dict(zip(self.observation_layout, self.observation_sizes, strict=True)),
         "skill_terms_in_order": {
           "phase_one_hot": metadata["phases"], "support_one_hot": ["left", "right"],
           "foothold_minus_swing_site_m": ["heading_x", "heading_y", "vertical_z"],
@@ -71,5 +82,6 @@ class CampusRunner(StairsOnPolicyRunner):
         "raw_action_clip": self.env.clip_actions,
         "control": "default_joint_pos + action_scale * clipped_action",
         "unitree": get_base_metadata(env, "g1_edu_campus"),
+        **self.extra_contract(),
       }
       (directory / "sim2real-contract.json").write_text(json.dumps(contract, indent=2) + "\n", encoding="utf-8")

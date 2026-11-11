@@ -9,8 +9,7 @@ import torch.nn.functional as F
 from mjlab.managers.command_manager import CommandTerm, CommandTermCfg
 from mjlab.utils.lab_api.math import quat_apply_inverse, yaw_quat
 
-from .terrain import COURSES, DIFFICULTIES, MAX_RISERS, SPAWN_X
-from .terrain import course_layout
+from .terrain import DIFFICULTIES, MAX_RISERS, SPAWN_X
 
 
 class Phase(IntEnum):
@@ -72,7 +71,8 @@ class CampusSkill(CommandTerm):
       raise ValueError("Campus skills require left and right G1 foot sites in SDK order")
     if cfg.fixed_level is not None and not 0 <= cfg.fixed_level < len(DIFFICULTIES):
       raise ValueError("fixed_level is outside the campus curriculum")
-    if cfg.fixed_column is not None and not 0 <= cfg.fixed_column < len(COURSES):
+    tiles = terrain.cfg.terrain_generator.sub_terrains
+    if cfg.fixed_column is not None and not 0 <= cfg.fixed_column < len(tiles):
       raise ValueError("fixed_column is outside the campus course catalog")
     if cfg.fixed_column is not None and (
       (cfg.mode == "up_step" and cfg.fixed_column % 2)
@@ -80,11 +80,11 @@ class CampusSkill(CommandTerm):
     ):
       raise ValueError("The selected course has the wrong direction for this drill")
 
-    edges = torch.full((len(DIFFICULTIES), len(COURSES), MAX_RISERS + 1), 6.8)
+    edges = torch.full((len(DIFFICULTIES), len(tiles), MAX_RISERS + 1), 6.8)
     floors = torch.zeros_like(edges)
-    for column, tile in enumerate(terrain.cfg.terrain_generator.sub_terrains.values()):
+    for column, tile in enumerate(tiles.values()):
       for level in range(len(DIFFICULTIES)):
-        course_edges, heights = course_layout(tile.seed, level, column)
+        course_edges, heights = tile.layout(level)
         edges[level, column, :len(course_edges)] = torch.as_tensor(course_edges - SPAWN_X)
         floors[level, column, :len(heights)] = torch.as_tensor(heights)
     self.edges = edges.to(self.device)
@@ -94,6 +94,7 @@ class CampusSkill(CommandTerm):
       device=self.device,
     )
     self.ids = torch.arange(self.num_envs, device=self.device)
+    self.forward_sign = torch.ones(self.num_envs, device=self.device)
     mixed = torch.tensor([Drill.LEFT, Drill.RIGHT, Drill.STEP, Drill.FLIGHT, Drill.FLIGHT], device=self.device)
     self.drill = mixed[self.ids % len(mixed)] if cfg.mode == "mixed" else torch.full_like(self.ids, MODES[cfg.mode])
     self.balance = self.drill < Drill.STEP
@@ -176,6 +177,7 @@ class CampusSkill(CommandTerm):
     old = self.phase.clone()
     origin = self.terrain.env_origins
     root = self.robot.data.root_link_pos_w - origin
+    root_x = root[:, 0] * self.forward_sign
     velocity = self.robot.data.root_link_lin_vel_w
     feet, found, force = self._feet()
     com = self._env.sim.data.subtree_com[:, self.robot.indexing.root_body_id]
@@ -186,7 +188,7 @@ class CampusSkill(CommandTerm):
     load = force[self.ids, self.support] / force.sum(dim=1).clamp_min(1.0)
     _, edge, next_edge, start_z, goal_z, count, width, hold_s, lift = self.targets()
     upright = self.robot.data.projected_gravity_b[:, 2] < -.87
-    swing_x = swing[:, 0] - origin[:, 0]
+    swing_x = (swing[:, 0] - origin[:, 0]) * self.forward_sign
     near_support = (com[:, 1] - support_xyz[:, 1]).abs() < .09
     shifted = supported & near_support & (load >= self.cfg.load_fraction)
     shift_done = shifted | (~self.balance & supported & air)
@@ -198,9 +200,9 @@ class CampusSkill(CommandTerm):
                & ((swing[:, 2] - goal_z).abs() < .055)
                & ((swing[:, 1] - origin[:, 1]).abs() < width / 2 - self.cfg.lane_margin_m))
     transferable = contact & (force[self.ids, 1 - self.support] >= force.sum(dim=1) * self.cfg.load_fraction)
-    on_landing = ((feet[..., 0] - origin[:, 0:1]) > (edge[:, None] + .12)).all(dim=1)
+    on_landing = (((feet[..., 0] - origin[:, 0:1]) * self.forward_sign[:, None]) > (edge[:, None] + .12)).all(dim=1)
     on_landing &= ((feet[..., 2] - goal_z[:, None]).abs() < .055).all(dim=1)
-    finish = found.all(dim=1) & on_landing & (root[:, 0] > edge + self.cfg.finish_cross_m) & upright
+    finish = found.all(dim=1) & on_landing & (root_x > edge + self.cfg.finish_cross_m) & upright
     finish &= velocity[:, :2].norm(dim=1) <= self.cfg.finish_max_speed_mps
     finish &= root[:, 1].abs() < width / 2 - self.cfg.lane_margin_m
     holding = supported & lifted & near_support & upright & (velocity[:, :2].norm(dim=1) < .28)
@@ -214,7 +216,7 @@ class CampusSkill(CommandTerm):
       | ((old == Phase.FINISH) & (self.hold * self._env.step_dt >= self.cfg.finish_s))
     ) & upright
 
-    phase = torch.where((old == Phase.APPROACH) & (root[:, 0] >= edge - .40), Phase.SHIFT, old)
+    phase = torch.where((old == Phase.APPROACH) & (root_x >= edge - .40), Phase.SHIFT, old)
     phase = torch.where((old == Phase.SHIFT) & shift_done, Phase.LIFT, phase)
     phase = torch.where((old == Phase.LIFT) & lifted, torch.where(self.balance, Phase.HOLD, Phase.CLEAR), phase)
     phase = torch.where((old == Phase.CLEAR) & clear, Phase.PLANT, phase)

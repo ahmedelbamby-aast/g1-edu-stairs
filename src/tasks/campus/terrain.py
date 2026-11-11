@@ -78,13 +78,19 @@ class CampusTileCfg(SubTerrainCfg):
   column: int = 0
   seed: int = 41
 
+  def layout(self, level):
+    return course_layout(self.seed, level, self.column)
+
+  def bounds(self, level):
+    return self.size[0], DIFFICULTIES[level].width_m
+
   def function(self, difficulty, spec, rng):
     del rng
     level = min(len(DIFFICULTIES) - 1, int(difficulty * len(DIFFICULTIES)))
-    edges, heights = course_layout(self.seed, level, self.column)
-    width = DIFFICULTIES[level].width_m
+    edges, heights = self.layout(level)
+    length, width = self.bounds(level)
     body = spec.body("terrain")
-    boundaries = np.r_[0.0, edges, self.size[0]]
+    boundaries = np.r_[0.0, edges, length]
     geometry = []
     for index, (left, right, height) in enumerate(zip(boundaries[:-1], boundaries[1:], heights, strict=True)):
       bottom = -.30
