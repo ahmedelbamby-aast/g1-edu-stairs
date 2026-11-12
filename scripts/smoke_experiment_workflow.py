@@ -7,7 +7,7 @@ import sys
 from pathlib import Path
 from unittest.mock import patch
 
-from torch.utils.tensorboard import SummaryWriter
+from scripts.smoke_training_metrics import fixture_writer
 
 from scripts import run_mastery_experiment
 from scripts.training_metrics import atomic_json, collect, pending, read_json
@@ -43,7 +43,7 @@ def main():
           "timestamp, index, memory.used [MiB], utilization.gpu [%], power.draw [W]\n"
           "1970/01/01 00:16:40.000, 0, 1234, 98, 55.5\n"
           "1970/01/01 00:16:40.001, 1, 2345, 97, 54.5\n", encoding="utf-8")
-      with SummaryWriter(str(run)) as writer:
+      with fixture_writer(run) as writer:
         writer.add_scalar("Loss/value", 1., 0, walltime=1000 + len(seen))
       if failure:
         raise subprocess.CalledProcessError(1, command)

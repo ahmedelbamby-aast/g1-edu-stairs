@@ -5,13 +5,31 @@ import json
 import shutil
 import subprocess
 import sys
+from contextlib import contextmanager
 from pathlib import Path
 
 from PIL import Image
-from torch.utils.tensorboard import SummaryWriter
+from tensorboard.compat.proto.event_pb2 import Event
+from tensorboard.compat.proto.summary_pb2 import Summary
+from tensorboard.summary.writer.event_file_writer import EventFileWriter
 
 from scripts.training_metrics import (REQUIRED_RL, RL_FAMILIES, atomic_json, collect, compare,
                                       evaluation_metrics, export_run, pending, queue)
+
+
+@contextmanager
+def fixture_writer(path):
+  """Write labelled scalar fixtures without importing any training framework."""
+  writer = EventFileWriter(str(path))
+  class Scalars:
+    def add_scalar(self, tag, value, step, walltime):
+      writer.add_event(Event(wall_time=walltime, step=step,
+                            summary=Summary(value=[Summary.Value(tag=tag, simple_value=float(value))])))
+  try:
+    yield Scalars()
+  finally:
+    writer.flush()
+    writer.close()
 
 
 def main():
@@ -29,12 +47,12 @@ def main():
     atomic_json(run / "experiment.json", {"experiment_id": f"synthetic-experiment-{run_index}",
                 "data_kind": "synthetic-smoke", "start_update": run_index * 100, "end_update": (run_index + 1) * 100})
     tags = (*REQUIRED_RL, *(prefix + "fixture" if prefix.endswith("/") or prefix.endswith("_") else prefix for prefix in RL_FAMILIES))
-    with SummaryWriter(str(run)) as writer:
+    with fixture_writer(run) as writer:
       for step in range(3):
         for tag in tags:
           writer.add_scalar(tag, step + .5 + run_index, step, walltime=1000 + run_index * 100 + step * 10)
     # A later event file replaces a duplicate tag/step, without dropping other metrics.
-    with SummaryWriter(str(run / "restart")) as writer:
+    with fixture_writer(run / "restart") as writer:
       writer.add_scalar("Loss/value", 42., 2, walltime=1090 + run_index * 100)
     cells = [{"episodes": 2, "completed_round_trips": 1, "falls": 1, "lane_exits": 0, "timeouts": 0},
              {"episodes": 10, "completed_round_trips": 9, "falls": 1, "lane_exits": 0, "timeouts": 0}]

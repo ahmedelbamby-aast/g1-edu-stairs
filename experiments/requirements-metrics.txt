@@ -1,0 +1,3 @@
+# CPU-only report generation and smoke checks; no robot simulator or Torch needed.
+matplotlib==3.11.2
+tensorboard==2.21.0
