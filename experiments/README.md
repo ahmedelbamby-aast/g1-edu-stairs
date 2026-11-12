@@ -66,4 +66,6 @@ The [mastery guide](../doc/stair-mastery.md) describes the adaptive curriculum, 
 
 ## Automated metrics and publishing
 
-The [observability record](results/metrics-observability/) links raw reporting checks, historical curve plots, automated publishing receipts and local verification. [The guide](../doc/training-metrics.md) explains the no-agent scripts. No training was started during these checks. The VM is currently offline, so a fresh GPU preflight remains required.
+The [observability record](results/metrics-observability/) links raw reporting checks, historical curve plots, automated publishing receipts and local verification. [The guide](../doc/training-metrics.md) explains the no-agent scripts. No training was started during these checks.
+
+The [fresh-server recovery record](results/server-recovery-20261112/) supersedes the earlier offline status. It verifies restored results, GPU/inference readiness, headless plots, direct server uploads and a checksum-verified developer download. [Server recovery and delivery guide](../doc/server-results.md).

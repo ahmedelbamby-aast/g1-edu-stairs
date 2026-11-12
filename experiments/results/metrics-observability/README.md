@@ -23,7 +23,7 @@ The following execution checks completed on the VM: two simultaneous 1,080-world
 
 The final combined Windows preflight printed both GPU pass messages, then SSH disconnected. Some later VM-only raw reports were not uploaded before shutdown. They must be reproduced on the returning server; this directory does not claim to preserve those missing files.
 
-**Current server readiness is pending reconnection and a fresh GPU preflight.** Offline code verification can pass while the VM is unavailable. `readiness.json` records these separately.
+**This was the offline status at the end of that session.** It is superseded by the [fresh-server recovery and delivery verification](../server-recovery-20261112/). Offline code verification and fresh GPU readiness remain separate records.
 
 ## Example saved curve
 

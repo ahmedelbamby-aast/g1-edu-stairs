@@ -43,6 +43,8 @@ Values are plotted without smoothing. Missing measurements remain missing. A tur
 
 ## Automatic GitHub delivery
 
+The default is now the [independent GPU-server service](server-results.md), which restores prior published results on an empty VM and uploads directly. It does not require Windows to remain online. The watcher described below is an optional fallback. The fresh [reset-recovery verification](../experiments/results/server-recovery-20261112/) supersedes the previous session's offline status.
+
 The VM exports plots and writes a content-digest publication queue after each completed training/evaluation segment. Failed runs also preserve diagnostics and queue available measurements. The reference and campus evaluation scripts refresh their reports too. Training runs do not require manually asking an agent to upload them.
 
 The Windows watcher uses the existing SSH tunnel and GitHub CLI login. It downloads the full run archive, verifies SHA-256, uploads the archive/checksum and smaller metrics ZIP to a GitHub release, and acknowledges the exact queued digest. Interrupted transfers stay pending. Identical acknowledged snapshots are skipped; updated reports are uploaded again.
@@ -60,7 +62,7 @@ For future training, the following launcher first checks GitHub write access, bo
   -Stage ascent -InitActorOnnx /absolute/path/to/policy.onnx
 ```
 
-Adding `-StartTraining` is the explicit future action that starts training and the result watcher. Read-only preflight checks retry SSH transport errors up to three times. A training launch is never automatically retried. A unique launch lock prevents accidentally reusing the same run ID.
+Adding `-StartTraining` is the explicit future action that starts training after GPU and server-delivery checks. Direct server publishing remains independent of Windows; add `-WatchFromWindows` only for the fallback watcher. Non-training preflight checks retry SSH transport errors up to three times. A training launch is never automatically retried. A unique launch lock prevents accidentally reusing the same run ID.
 
 ## Repeat verification without training
 
@@ -98,4 +100,4 @@ The [published reporting smoke archive](https://github.com/ahmedelbamby-aast/g1-
 
 Before the VM went offline, concurrent capacity checks passed on both T4s with 1,080 worlds per GPU and about 13.5 GiB free per GPU. NCCL, the refreshed 13-task phase suite, independent 972-world student validation, and two held-out evaluations also passed their execution checks. No training was performed. Some later VM-only raw reports were not synchronized before disconnection; they are not claimed as recoverable artifacts. The published archive and local verified copy remain available.
 
-The final integrated launcher received both GPU pass messages, then the SSH connection closed. A new session must pass preflight again. Current readiness therefore depends on the VM returning and the fresh GPU checks completing. [Implementation and verification record](../experiments/results/metrics-observability/).
+The previous integrated launcher received both GPU pass messages, then SSH disconnected. That session is recorded in the [original verification record](../experiments/results/metrics-observability/). A new VM has since been rebuilt, 19 prior published runs restored, and fresh GPU checks and direct delivery verified; see the [current recovery record](../experiments/results/server-recovery-20261112/).

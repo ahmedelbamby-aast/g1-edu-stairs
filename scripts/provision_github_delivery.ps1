@@ -11,7 +11,7 @@ $sshOptions = @('-p',"$Port",'-o','IdentitiesOnly=yes','-o','BatchMode=yes','-o'
 $credential = gh auth token
 if ($LASTEXITCODE -ne 0 -or -not $credential -or $credential -match '\s') { throw 'A valid GitHub CLI login is required.' }
 try {
-  $credential | ssh @sshOptions root@127.0.0.1 'umask 077; mkdir -p /codex_download_here_work_here/credentials; chmod 700 /codex_download_here_work_here/credentials; cat > /codex_download_here_work_here/credentials/github-token; chmod 600 /codex_download_here_work_here/credentials/github-token'
+  $credential | ssh @sshOptions root@127.0.0.1 'set -e; umask 077; mkdir -p /codex_download_here_work_here/credentials; chmod 700 /codex_download_here_work_here/credentials; github_credential_tmp=$(mktemp /codex_download_here_work_here/credentials/.github-token.XXXXXX); cat > "$github_credential_tmp"; chmod 600 "$github_credential_tmp"; mv -f "$github_credential_tmp" /codex_download_here_work_here/credentials/github-token'
   if ($LASTEXITCODE -ne 0) { throw 'Could not provision the private server credential.' }
 } finally { Remove-Variable credential -ErrorAction SilentlyContinue }
 Write-Output 'Provisioned GitHub delivery credential over verified SSH; no credential was logged.'
