@@ -13,13 +13,13 @@ function global:ssh {
 }
 try {
   & "$PSScriptRoot/start_mastery_experiment.ps1" -RunId mocked-readiness -InitActorOnnx /synthetic/policy.onnx
-  if ($global:StairLaunchSmoke.commands.Count -ne 4) { throw 'Read-only retry or preflight coverage was incorrect.' }
+  if ($global:StairLaunchSmoke.commands.Count -ne 5 -or -not ($global:StairLaunchSmoke.commands | Where-Object {$_ -match 'server_results_service start'})) { throw 'Retry or server-delivery preflight coverage was incorrect.' }
   $global:StairLaunchSmoke.failAll = $true
   $caught = $false
   try {
     & "$PSScriptRoot/start_mastery_experiment.ps1" -RunId mocked-unreachable -InitActorOnnx /synthetic/policy.onnx
   } catch { $caught = $true }
-  if (-not $caught -or $global:StairLaunchSmoke.commands.Count -ne 7) { throw 'Transport failure did not stop after three attempts.' }
+  if (-not $caught -or $global:StairLaunchSmoke.commands.Count -ne 8) { throw 'Transport failure did not stop after three attempts.' }
   'PASS launch guard: preflight retries bounded; no training command executed'
 } finally {
   Remove-Item Function:\gh,Function:\ssh -ErrorAction SilentlyContinue

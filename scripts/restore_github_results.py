@@ -8,7 +8,7 @@ import tempfile
 import time
 from pathlib import Path
 
-from scripts.github_delivery import DEFAULT_REPO, DEFAULT_TOKEN, GitHub, safe_members, verify_hash
+from scripts.github_delivery import DEFAULT_REPO, DEFAULT_TOKEN, GitHub, safe_members, sha256, verify_hash
 from scripts.training_metrics import SAFE_ID, atomic_json, read_json
 
 
@@ -41,7 +41,9 @@ def restore_release(release, root, scratch, github):
   destination = root / run_id
   if destination.exists():
     receipt = read_json(destination / "restore-receipt.json", {})
-    return {"run_id": run_id, "tag": tag, "status": "already_present", "verified_restore": receipt.get("sha256") == expected}
+    return {"run_id": run_id, "tag": tag, "status": "already_present",
+            "verified_restore": receipt.get("verified_restore", False),
+            "same_remote_snapshot": receipt.get("sha256") == expected}
   archive = cache / filename
   if archive.exists():
     try:
@@ -82,6 +84,21 @@ def restore_release(release, root, scratch, github):
   return receipt
 
 
+def restore_videos(root, content):
+  restored = []
+  for run in sorted(root.iterdir()):
+    if not run.is_dir() or not SAFE_ID.fullmatch(run.name):
+      continue
+    for video in sorted(run.rglob("*.mp4")):
+      destination = content / run.name / video.relative_to(run)
+      destination.parent.mkdir(parents=True, exist_ok=True)
+      if not destination.exists():
+        shutil.copy2(video, destination)
+      restored.append({"source": str(video), "path": str(destination), "sha256": sha256(destination),
+                       "matches_source": sha256(destination) == sha256(video)})
+  return restored
+
+
 def main():
   parser = argparse.ArgumentParser(description=__doc__)
   parser.add_argument("--repo", default=DEFAULT_REPO)
@@ -89,6 +106,7 @@ def main():
   parser.add_argument("--scratch", type=Path, default=Path("/codex_download_here_work_here"))
   parser.add_argument("--token-file", type=Path, default=DEFAULT_TOKEN)
   parser.add_argument("--tags", nargs="*")
+  parser.add_argument("--video-root", type=Path, default=Path("/kaggle/content/g1-edu-stairs/videos"))
   args = parser.parse_args()
   github = GitHub(args.repo, args.token_file)
   releases = github.releases()
@@ -108,6 +126,7 @@ def main():
       print(f'Failed restore: {release["tag_name"]}: {error}', flush=True)
     atomic_json(args.scratch / "recovery" / "restore-status.json", report)
   report["completed_at"] = time.time()
+  report["videos"] = restore_videos(args.root, args.video_root)
   atomic_json(args.scratch / "recovery" / "restore-status.json", report)
   if report["failures"]:
     raise SystemExit(1)
