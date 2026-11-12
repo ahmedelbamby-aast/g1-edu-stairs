@@ -224,6 +224,21 @@ def export_run(run, output=None):
   return summary
 
 
+def finalize_run(run, output=None):
+  """Preserve a queued raw recovery copy even if plotting or parsing fails."""
+  run = Path(run)
+  try:
+    summary = export_run(run, output)
+    if (run / "metrics-error.json").exists():
+      (run / "metrics-error.json").unlink()
+  except Exception as error:
+    atomic_json(run / "metrics-error.json", {"status": "failed", "error": str(error), "wall_time": time.time()})
+    raise
+  finally:
+    queue(run)
+  return summary
+
+
 def compare(runs, output):
   rows, summaries = [], []
   for run in runs:
@@ -319,6 +334,8 @@ def main():
   combined.add_argument("--output", type=Path, required=True)
   listing = commands.add_parser("pending")
   listing.add_argument("--root", type=Path, default=Path("/kaggle/working/g1-edu-stairs"))
+  enqueue = commands.add_parser("queue")
+  enqueue.add_argument("--run", type=Path, required=True)
   acknowledge = commands.add_parser("acknowledge")
   acknowledge.add_argument("--root", type=Path, default=Path("/kaggle/working/g1-edu-stairs"))
   acknowledge.add_argument("--run-id", required=True)
@@ -326,9 +343,7 @@ def main():
   acknowledge.add_argument("--url", required=True)
   args = parser.parse_args()
   if args.command == "export":
-    summary = export_run(args.run, args.output)
-    if args.queue:
-      queue(args.run)
+    summary = finalize_run(args.run, args.output) if args.queue else export_run(args.run, args.output)
     if args.catalog:
       update_catalog(args.run.parent)
     print(json.dumps({"points": summary["points"], "plots": summary["plots"],
@@ -337,6 +352,8 @@ def main():
     compare(args.runs, args.output)
   elif args.command == "pending":
     print(json.dumps(pending(args.root)))
+  elif args.command == "queue":
+    print(json.dumps(queue(args.run)))
   else:
     if not SAFE_ID.fullmatch(args.run_id) or not re.fullmatch(r"[a-f0-9]{64}", args.digest):
       parser.error("Invalid run ID or digest")

@@ -99,6 +99,7 @@ finish() {
       echo "Metric export failed; see $run_dir/metrics-export.log" >&2
       if [[ "$status" == 0 ]]; then status=95; fi
       printf '%s\n' "$status" > "$run_dir/exit-code.txt"
+      .venv/bin/python -m scripts.training_metrics queue --run "$run_dir" >> "$run_dir/metrics-export.log" 2>&1 || true
     fi
   fi
   exit "$status"

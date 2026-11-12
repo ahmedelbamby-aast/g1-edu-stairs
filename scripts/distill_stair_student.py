@@ -21,7 +21,7 @@ from src.tasks.stair_mastery import mastery_env_cfg, mastery_runner_cfg
 from src.tasks.stair_mastery.distillation import ExpertPolicies, imitation_loss
 from src.tasks.stair_mastery.runner import MasteryRunner
 from src.tasks.stair_mastery.validation import ImitationValidator
-from scripts.training_metrics import atomic_json, export_run, queue, update_catalog
+from scripts.training_metrics import atomic_json, finalize_run, update_catalog
 
 
 def main():
@@ -164,8 +164,7 @@ def main():
     (args.output / "distillation.json").write_text(json.dumps(manifest, indent=2) + "\n", encoding="utf-8")
     (args.output / "git-commit.txt").write_text(manifest["source_commit"] + "\n", encoding="utf-8")
     (args.output / "exit-code.txt").write_text(str(status) + "\n", encoding="utf-8")
-    export_run(args.output)
-    queue(args.output)
+    finalize_run(args.output)
     if not args.check_only:
       update_catalog(args.output.parent)
 

@@ -10,7 +10,7 @@ from unittest.mock import patch
 from scripts.smoke_training_metrics import fixture_writer
 
 from scripts import run_mastery_experiment
-from scripts.training_metrics import atomic_json, collect, pending, read_json, update_catalog
+from scripts.training_metrics import atomic_json, collect, finalize_run, pending, read_json, update_catalog
 
 
 def main():
@@ -91,10 +91,20 @@ def main():
       writer.add_scalar("Loss/value", 1., 0, walltime=1000.)
   update_catalog(args.output)
   assert not (args.output / "experiment-comparisons").exists(), "Readiness fixtures leaked into the training catalog"
+  damaged = args.output / "plot-error-backup"
+  damaged.mkdir()
+  (damaged / "exit-code.txt").write_text("1\n", encoding="utf-8")
+  with patch("scripts.training_metrics.export_run", side_effect=RuntimeError("Synthetic plot failure")):
+    try:
+      finalize_run(damaged)
+      raise AssertionError("Plot failure was hidden")
+    except RuntimeError:
+      pass
+  assert (damaged / "publish-ready.json").exists() and (damaged / "metrics-error.json").exists()
   atomic_json(args.output / "smoke.json", {"status": "passed", "optimizer_steps": 0,
       "data_kind": "mocked orchestration", "checks": ["initialization_then_resume", "two_suites_each_segment",
       "expert_specific_evaluation", "comparison_report_queued", "failure_propagated_and_archived", "gpu_telemetry_csv",
-      "nested_readiness_fixtures_excluded_from_training_catalog"]})
+      "nested_readiness_fixtures_excluded_from_training_catalog", "raw_results_queued_after_plot_failure"]})
   print("PASS mocked experiment orchestration; no training producer executed")
 
 

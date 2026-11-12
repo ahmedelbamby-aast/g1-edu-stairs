@@ -7,7 +7,7 @@ import subprocess
 import time
 from pathlib import Path
 
-from scripts.training_metrics import atomic_json, compare, export_run, queue, update_catalog
+from scripts.training_metrics import atomic_json, compare, finalize_run, queue, update_catalog
 
 STAGES = {
   "ascent": "Unitree-G1-EDU-Stair-Expert-Ascent",
@@ -85,8 +85,7 @@ def main():
       if segment.exists():
         segments.append(segment)
         (segment / "workflow-exit-code.txt").write_text(str(status) + "\n", encoding="utf-8")
-        export_run(segment)
-        queue(segment)
+        finalize_run(segment)
         compare(segments, report / "metrics")
         (report / "exit-code.txt").write_text(str(status) + "\n", encoding="utf-8")
         queue(report)
