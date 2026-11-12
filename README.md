@@ -14,6 +14,8 @@ specialist training, speed control, two-step lookahead, observation history and 
 
 [Training metrics and automatic GitHub reports](doc/training-metrics.md) cover loss/reward curves, independent student validation, held-out outcomes, run comparisons and scripted verification with no training.
 
+[Direct GPU-server publishing and reset recovery](doc/server-results.md) restore saved runs on an empty VM, plot headlessly and deliver verified downloads without an open Windows watcher.
+
 
 ## ✳️ Overview
 Unitree RL Mjlab is a reinforcement learning project built upon the

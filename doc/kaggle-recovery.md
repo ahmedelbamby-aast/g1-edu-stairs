@@ -2,6 +2,8 @@
 
 The GitHub fork contains the task, full dependency versions, training profiles, and startup scripts. GitHub Releases carry the binary checkpoints and experiment files. The Windows copy of the repository keeps the downloaded archives under `outputs/runs`.
 
+For complete automatic recovery and direct GPU-server publishing, use the [server results workflow](server-results.md). `scripts/recover_kaggle_session.ps1` rebuilds dependencies, restores published results and starts the server uploader without starting training. The older manual steps below remain available.
+
 ## Connect and install
 
 1. Start a Kaggle session with the T4 GPU accelerator. Run the notebook's SSH and private zrok share setup. Copy the new VM's **ED25519 fingerprint** from the notebook log.

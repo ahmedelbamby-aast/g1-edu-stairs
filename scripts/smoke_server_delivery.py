@@ -25,6 +25,7 @@ class FakeGitHub:
     self.uploaded = {}
     self.created = False
     self.fail_upload = False
+    self.fail_pointer = False
     self.commands = []
 
   def release(self, tag):
@@ -40,6 +41,9 @@ class FakeGitHub:
         self.fail_upload = False
         raise RuntimeError("Simulated offline GitHub")
       paths = arguments[3:arguments.index("--repo")]
+      if self.fail_pointer and any(Path(path).name == "downloads.json" for path in paths):
+        self.fail_pointer = False
+        raise RuntimeError("Simulated lost connection before publishing the download pointer")
       for path in paths:
         path = Path(path)
         target = self.root / path.name
@@ -77,7 +81,16 @@ def checks(root):
   except RuntimeError:
     pass
   assert not (run / "publish-receipt.json").exists() and "downloads.json" not in github.uploaded
+  github.fail_pointer = True
+  try:
+    publish_run(run, root / "scratch", github)
+    raise AssertionError("Pointer publication failure was hidden")
+  except RuntimeError:
+    pass
+  assert not (run / "publish-receipt.json").exists() and "downloads.json" not in github.uploaded
+  completed_payloads = {name: sha256(path) for name, path in github.uploaded.items()}
   receipt = publish_run(run, root / "scratch", github)
+  assert all(sha256(github.uploaded[name]) == digest for name, digest in completed_payloads.items())
   assert receipt["digest"] == queued["digest"]
   assert github.commands[-1][3].endswith("downloads.json"), "Pointer was not published last"
   command_count = len(github.commands)
@@ -126,7 +139,7 @@ def checks(root):
   return {"status": "passed", "optimizer_steps": 0, "checks": ["upload_failure_retained", "retry_success",
           "pointer_published_last", "unchanged_upload_skipped", "developer_download_sha256",
           "fresh_vm_restore", "restore_idempotent", "archive_traversal_and_links_rejected",
-          "corruption_rejected", "credentials_outside_archives"]}
+          "corruption_rejected", "credentials_outside_archives", "pointer_failure_retry_preserves_versioned_payloads"]}
 
 
 def main():
