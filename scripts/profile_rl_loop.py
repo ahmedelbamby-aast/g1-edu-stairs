@@ -5,12 +5,45 @@ import csv
 import functools
 import gzip
 import pstats
+import json
+import resource
+import time
 from contextlib import contextmanager
 from pathlib import Path
 
 import torch
 
 from scripts.training_metrics import atomic_json
+
+
+@contextmanager
+def record_performance(runner, directory, rank, device):
+  directory = Path(directory) / "performance"
+  directory.mkdir(parents=True, exist_ok=True)
+  original = runner.logger.log
+  with (directory / f"rank-{rank}.jsonl").open("w", encoding="utf-8") as stream:
+    def measured(*args, **kwargs):
+      original(*args, **kwargs)
+      free, total = torch.cuda.mem_get_info(device)
+      usage = resource.getrusage(resource.RUSAGE_SELF)
+      values = {"iteration": kwargs["it"], "wall_time": time.time(),
+                "collection_s": kwargs["collect_time"], "update_s": kwargs["learn_time"],
+                "gpu_used_mib": (total - free) / 1024**2,
+                "torch_peak_mib": torch.cuda.max_memory_allocated(device) / 1024**2,
+                "torch_reserved_mib": torch.cuda.memory_reserved(device) / 1024**2,
+                "gpu_free_mib": free / 1024**2,
+                "process_cpu_s": usage.ru_utime + usage.ru_stime, "loss": kwargs["loss_dict"]}
+      stream.write(json.dumps(values, allow_nan=False) + "\n")
+      stream.flush()
+      writer = getattr(runner.logger, "writer", None)
+      if writer is not None:
+        for name in ("gpu_used_mib", "torch_peak_mib", "torch_reserved_mib", "gpu_free_mib"):
+          writer.add_scalar("Performance/" + name, values[name], kwargs["it"])
+    runner.logger.log = measured
+    try:
+      yield
+    finally:
+      runner.logger.log = original
 
 
 @contextmanager

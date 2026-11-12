@@ -40,6 +40,7 @@ class TrainConfig:
   profile_wait: int = 3
   profile_active: int = 2
   omit_unused_teacher_observations: bool = False
+  record_performance: bool = False
 
   @staticmethod
   def from_task(task_id: str) -> "TrainConfig":
@@ -177,7 +178,12 @@ def run_train(task_id: str, cfg: TrainConfig, log_dir: Path) -> None:
     profiling = profile_rl_loop(runner, log_dir, rank, cfg.profile_wait, cfg.profile_active)
   else:
     profiling = nullcontext()
-  with profiling:
+  if cfg.record_performance:
+    from scripts.profile_rl_loop import record_performance
+    performance = record_performance(runner, log_dir, rank, device)
+  else:
+    performance = nullcontext()
+  with performance, profiling:
     runner.learn(
       num_learning_iterations=cfg.agent.max_iterations,
       init_at_random_ep_len=cfg.randomize_initial_episode_length,
