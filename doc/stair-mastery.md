@@ -87,3 +87,5 @@ The imitation entry point accepts separate ascent, turn and descent checkpoints.
 ```
 
 Training and imitation must be launched explicitly. Smoke results validate that the added paths execute and enforce their phase conditions. Task completion rates and physical robot performance require subsequent training and evaluation.
+
+The [metrics and publishing guide](training-metrics.md) describes automatic curve export, independent student validation MSE, run/experiment comparisons, GitHub delivery, and the repeatable no-training readiness command.

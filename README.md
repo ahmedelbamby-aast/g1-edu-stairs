@@ -12,6 +12,8 @@ descent on the same flight, and three pace and tread-depth bands.
 The [mastery tasks](doc/stair-mastery.md) add performance-based progression,
 specialist training, speed control, two-step lookahead, observation history and teacher/student transfer.
 
+[Training metrics and automatic GitHub reports](doc/training-metrics.md) cover loss/reward curves, independent student validation, held-out outcomes, run comparisons and scripted verification with no training.
+
 
 ## ✳️ Overview
 Unitree RL Mjlab is a reinforcement learning project built upon the
