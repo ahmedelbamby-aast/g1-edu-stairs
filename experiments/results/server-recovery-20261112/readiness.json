@@ -1,0 +1,18 @@
+{
+  "status": "passed",
+  "optimizer_steps": 0,
+  "checks_passed": [
+    "metrics",
+    "workflow",
+    "concurrent-capacity",
+    "collective",
+    "phases",
+    "student"
+  ],
+  "gpu_checks": "passed",
+  "training_ready": true,
+  "full_evaluation": false,
+  "source_commit": "530ca33bfb5eba2d4fd1c17ae3aba2a5b7122fe3",
+  "wall_time": 1794486232.8559532,
+  "github_upload": "queued_for_windows_publisher"
+}

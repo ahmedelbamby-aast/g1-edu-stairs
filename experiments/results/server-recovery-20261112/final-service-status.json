@@ -1,0 +1,127 @@
+{
+  "pid": 2381,
+  "started_at": 1794487137.9457955,
+  "repository": "ahmedelbamby-aast/g1-edu-stairs",
+  "optimizer_steps": 0,
+  "authentication": {
+    "repository": "ahmedelbamby-aast/g1-edu-stairs",
+    "write_access": true
+  },
+  "rendering": {
+    "backend": "Agg",
+    "png": "passed"
+  },
+  "jobs": {
+    "round-trip-pilot-s42": {
+      "digest": "38f83c58e98e828f2f77e045b0f31cf1abb0ef91223c8eb48760373b126265ed",
+      "status": "published",
+      "receipt": "https://github.com/ahmedelbamby-aast/g1-edu-stairs/releases/tag/run-round-trip-pilot-s42",
+      "uploaded_at": 1794485846.4630663,
+      "attempts": 0
+    },
+    "campus-balance-left": {
+      "digest": "3c20bc11323bab1c3b018b9b91cf8cda49b5164a34056c829eadb8bd3e8fd53f",
+      "status": "published",
+      "receipt": "https://github.com/ahmedelbamby-aast/g1-edu-stairs/releases/tag/run-campus-balance-left",
+      "uploaded_at": 1794486365.4117815,
+      "attempts": 0
+    },
+    "campus-balance-right": {
+      "digest": "04c6a2caecc50d02d0e6ef2a192a0f4af875c12728f32ee8b3738db3c2b6ba37",
+      "status": "published",
+      "receipt": "https://github.com/ahmedelbamby-aast/g1-edu-stairs/releases/tag/run-campus-balance-right",
+      "uploaded_at": 1794486373.3748195,
+      "attempts": 0
+    },
+    "campus-pilot-s42": {
+      "digest": "c0faaae40c45ab40d557f59d2c5382eb3f219ead3c55c666bfc8fb1331689f9e",
+      "status": "published",
+      "receipt": "https://github.com/ahmedelbamby-aast/g1-edu-stairs/releases/tag/run-campus-pilot-s42",
+      "uploaded_at": 1794486381.0723495,
+      "attempts": 0
+    },
+    "campus-refine-s42": {
+      "digest": "96657cbfd87a8854f339f9d05e0455fe034ecca421ba92cf18179b75ede97ce1",
+      "status": "published",
+      "receipt": "https://github.com/ahmedelbamby-aast/g1-edu-stairs/releases/tag/run-campus-refine-s42",
+      "uploaded_at": 1794486389.3930244,
+      "attempts": 0
+    },
+    "campus-smoke-v2": {
+      "digest": "2eaea9c77e03dbb5357e6d5ef700030f826ea71a7fd6000bea8bfa19717b2617",
+      "status": "published",
+      "receipt": "https://github.com/ahmedelbamby-aast/g1-edu-stairs/releases/tag/run-campus-smoke-v2",
+      "uploaded_at": 1794486394.8585396,
+      "attempts": 0
+    },
+    "reference-t4-s42": {
+      "digest": "0a4fd70e82a6a3d7a259486da7576d90ae2d7e28c4e94f84fefae283e61b73c0",
+      "status": "published",
+      "receipt": "https://github.com/ahmedelbamby-aast/g1-edu-stairs/releases/tag/run-reference-t4-s42",
+      "uploaded_at": 1794486414.3568044,
+      "attempts": 0
+    },
+    "round-trip-smoke-s42": {
+      "digest": "177c395f085d5804918f4ff194f03b9661f85db698b7db8b4f3df2dcb9241cc4",
+      "status": "published",
+      "receipt": "https://github.com/ahmedelbamby-aast/g1-edu-stairs/releases/tag/run-round-trip-smoke-s42",
+      "uploaded_at": 1794486432.413047,
+      "attempts": 0
+    },
+    "smoke-dual-t4-v4": {
+      "digest": "dad44b6659d5c15b03db049e1b657012d2a6101cf737f42f20799f1981a04263",
+      "status": "published",
+      "receipt": "https://github.com/ahmedelbamby-aast/g1-edu-stairs/releases/tag/run-smoke-dual-t4-v4",
+      "uploaded_at": 1794486444.0521815,
+      "attempts": 0
+    },
+    "t4-dual-1536": {
+      "digest": "29dbb0a9fbd33008c431de3c79824e73b7e321fd46a423cca827750e109bc231",
+      "status": "published",
+      "receipt": "https://github.com/ahmedelbamby-aast/g1-edu-stairs/releases/tag/run-t4-dual-1536",
+      "uploaded_at": 1794486450.3946571,
+      "attempts": 0
+    },
+    "t4-dual-3072": {
+      "digest": "f1296d5acbd4a0258a2e1386d3f989039f71bcad7b0686bfe1a875a6b64a3ec3",
+      "status": "published",
+      "receipt": "https://github.com/ahmedelbamby-aast/g1-edu-stairs/releases/tag/run-t4-dual-3072",
+      "uploaded_at": 1794486454.8388596,
+      "attempts": 0
+    },
+    "t4-dual-768": {
+      "digest": "70e5188c16159ad24f9c363e6c9f51b7bc23c4f412c8391853d44048482649dc",
+      "status": "published",
+      "receipt": "https://github.com/ahmedelbamby-aast/g1-edu-stairs/releases/tag/run-t4-dual-768",
+      "uploaded_at": 1794486459.1722949,
+      "attempts": 0
+    },
+    "experiment-comparisons": {
+      "digest": "9765549bd6c9909d076176eaec1ccc6ac830fa6da389548d35647bef5f8584f6",
+      "status": "published",
+      "receipt": "https://github.com/ahmedelbamby-aast/g1-edu-stairs/releases/tag/run-experiment-comparisons",
+      "uploaded_at": 1794486405.7100272,
+      "attempts": 0
+    },
+    "reset-recovery-check-20261112": {
+      "digest": "dc06198735745d8c8897c178a8cbcb6ed0677491c7625fc1801cbbd1f4656024",
+      "status": "published",
+      "receipt": "https://github.com/ahmedelbamby-aast/g1-edu-stairs/releases/tag/run-reset-recovery-check-20261112",
+      "uploaded_at": 1794487014.8544602,
+      "attempts": 0
+    },
+    "server-delivery-verified-20261112": {
+      "digest": "287890356df3af3500b40c7af22fd0d4a4a09bf5ed17fb4d2e471fb91fd23941",
+      "status": "published",
+      "receipt": "https://github.com/ahmedelbamby-aast/g1-edu-stairs/releases/tag/run-server-delivery-verified-20261112",
+      "uploaded_at": 1794487018.0215127,
+      "attempts": 0
+    }
+  },
+  "operation": "idle",
+  "active_run": null,
+  "heartbeat": 1794487138.9805532,
+  "last_successful_upload": 1794487018.0215156,
+  "pending": 0,
+  "process_alive": true
+}

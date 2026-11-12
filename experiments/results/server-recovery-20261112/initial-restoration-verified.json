@@ -1,0 +1,207 @@
+{
+  "repository": "ahmedelbamby-aast/g1-edu-stairs",
+  "started_at": 1794485704.351766,
+  "runs": [
+    {
+      "run_id": "metrics-local-readiness-v5",
+      "tag": "run-metrics-local-readiness-v5",
+      "status": "already_present",
+      "verified_restore": true
+    },
+    {
+      "run_id": "metrics-local-readiness-v4",
+      "tag": "run-metrics-local-readiness-v4",
+      "status": "already_present",
+      "verified_restore": true
+    },
+    {
+      "run_id": "metrics-local-readiness-v3",
+      "tag": "run-metrics-local-readiness-v3",
+      "status": "already_present",
+      "verified_restore": true
+    },
+    {
+      "run_id": "metrics-local-readiness-v2",
+      "tag": "run-metrics-local-readiness-v2",
+      "status": "already_present",
+      "verified_restore": true
+    },
+    {
+      "run_id": "round-trip-smoke-s42",
+      "tag": "run-round-trip-smoke-s42",
+      "sha256": "35191db286d35067a7f8f8b5c12dfa9ee495480340dfdd15b1c2b5405ccef91c",
+      "archive": "round-trip-smoke-s42.tar.gz",
+      "restored_at": 1794485707.9185755,
+      "status": "restored",
+      "verified_restore": true
+    },
+    {
+      "run_id": "round-trip-pilot-s42",
+      "tag": "run-round-trip-pilot-s42",
+      "sha256": "86e581a8ea93d6028fbc03315073947c9b8a62e1b834848370eb87c68144dd42",
+      "archive": "round-trip-pilot-s42.tar.gz",
+      "restored_at": 1794485709.655,
+      "status": "restored",
+      "verified_restore": true
+    },
+    {
+      "run_id": "reference-t4-s42",
+      "tag": "run-reference-t4-s42",
+      "sha256": "eae6d3fca2f94e5b4e641c25f48e48e52ec73b6f4341128795d2d176a5bd122d",
+      "archive": "reference-t4-s42.tar.gz",
+      "restored_at": 1794485711.359868,
+      "status": "restored",
+      "verified_restore": true
+    },
+    {
+      "run_id": "metrics-readiness-smoke-v1",
+      "tag": "run-metrics-readiness-smoke-v1",
+      "status": "already_present",
+      "verified_restore": true
+    },
+    {
+      "run_id": "mastery-smoke-v5",
+      "tag": "run-mastery-smoke-v5",
+      "status": "already_present",
+      "verified_restore": true
+    },
+    {
+      "run_id": "campus-smoke-v2",
+      "tag": "run-campus-smoke-v2",
+      "sha256": "e02d4efc8db358f495f8dfb3cec1d7ea047b1f9872e6c2076fa2c6b9dfb278f4",
+      "archive": "campus-smoke-v2.tar.gz",
+      "restored_at": 1794485713.606623,
+      "status": "restored",
+      "verified_restore": true
+    },
+    {
+      "run_id": "campus-refine-s42",
+      "tag": "run-campus-refine-s42",
+      "sha256": "bbae70ff9e50804220aceb8e565d891fed9bd2f46b3b8c8beb9ac29a221bb0ad",
+      "archive": "campus-refine-s42.tar.gz",
+      "restored_at": 1794485715.1385152,
+      "status": "restored",
+      "verified_restore": true
+    },
+    {
+      "run_id": "campus-pilot-s42",
+      "tag": "run-campus-pilot-s42",
+      "sha256": "b14cf90de0713181b86e224f55a143351f0fc75c754b51c1951e4f4b9b464490",
+      "archive": "campus-pilot-s42.tar.gz",
+      "restored_at": 1794485716.569112,
+      "status": "restored",
+      "verified_restore": true
+    },
+    {
+      "run_id": "campus-balance-right",
+      "tag": "run-campus-balance-right",
+      "status": "already_present",
+      "verified_restore": true
+    },
+    {
+      "run_id": "campus-balance-left",
+      "tag": "run-campus-balance-left",
+      "status": "already_present",
+      "verified_restore": true
+    },
+    {
+      "run_id": "t4-dual-768",
+      "tag": "run-t4-dual-768",
+      "sha256": "0b6251b371aa60923cdaa1020c9235d76ab1eca9c1d3b627bea704398dac5adc",
+      "archive": "t4-dual-768.tar.gz",
+      "restored_at": 1794485718.6820052,
+      "status": "restored",
+      "verified_restore": true
+    },
+    {
+      "run_id": "t4-dual-3072",
+      "tag": "run-t4-dual-3072",
+      "sha256": "170ea9ccaa114199e029d3599aef10016a8964b783d79b3307a34ef546eb0006",
+      "archive": "t4-dual-3072.tar.gz",
+      "restored_at": 1794485719.566673,
+      "status": "restored",
+      "verified_restore": true
+    },
+    {
+      "run_id": "t4-dual-1536",
+      "tag": "run-t4-dual-1536",
+      "sha256": "8827812dbcbab99a36861d87a8897b2ac7460054aabc36211289ba36869583ec",
+      "archive": "t4-dual-1536.tar.gz",
+      "restored_at": 1794485720.4193397,
+      "status": "restored",
+      "verified_restore": true
+    },
+    {
+      "run_id": "smoke-dual-t4-v4",
+      "tag": "run-smoke-dual-t4-v4",
+      "sha256": "8a15aaa6f41f85f53bff5cbf1d3c092192f771a179000db542b74253f203cc65",
+      "archive": "smoke-dual-t4-v4.tar.gz",
+      "restored_at": 1794485721.351073,
+      "status": "restored",
+      "verified_restore": true
+    },
+    {
+      "run_id": "bootstrap-diagnostics",
+      "tag": "run-bootstrap-diagnostics",
+      "sha256": "f07a486a3acbd58ae0e56ea03a9fffebe097e288a39cb11c282cc25eab2a8700",
+      "archive": "bootstrap-diagnostics.tar.gz",
+      "restored_at": 1794485722.0202458,
+      "status": "restored",
+      "verified_restore": true
+    }
+  ],
+  "failures": [],
+  "completed_at": 1794485722.0209012,
+  "videos": [
+    {
+      "source": "/kaggle/working/g1-edu-stairs/reference-t4-s42/media/level-1-up-standard.mp4",
+      "path": "/kaggle/content/g1-edu-stairs/videos/reference-t4-s42/media/level-1-up-standard.mp4",
+      "sha256": "d0c5ee00b25fa4711fa984b1539d600bc0e601a0f802f1c755f071f9d9e057e3",
+      "matches_source": true,
+      "resolution": {
+        "width": 1280,
+        "height": 720
+      }
+    },
+    {
+      "source": "/kaggle/working/g1-edu-stairs/reference-t4-s42/media/level-3-down-standard.mp4",
+      "path": "/kaggle/content/g1-edu-stairs/videos/reference-t4-s42/media/level-3-down-standard.mp4",
+      "sha256": "bae5f991a0ba66e13dacd8f651e486dea102ebc39305c61bd4fea81c84778b8c",
+      "matches_source": true,
+      "resolution": {
+        "width": 1280,
+        "height": 720
+      }
+    },
+    {
+      "source": "/kaggle/working/g1-edu-stairs/reference-t4-s42/media/level-5-down-compact.mp4",
+      "path": "/kaggle/content/g1-edu-stairs/videos/reference-t4-s42/media/level-5-down-compact.mp4",
+      "sha256": "ea0523d67787615a6bb76f7296aaf5c284cd45f6998f8252465044c8a98f6a6b",
+      "matches_source": true,
+      "resolution": {
+        "width": 1280,
+        "height": 720
+      }
+    },
+    {
+      "source": "/kaggle/working/g1-edu-stairs/reference-t4-s42/media/level-5-up-compact.mp4",
+      "path": "/kaggle/content/g1-edu-stairs/videos/reference-t4-s42/media/level-5-up-compact.mp4",
+      "sha256": "c59e7746d5cafe2296ca43b4319c140e3a2d31e6353eb7b6b55d5a955f298576",
+      "matches_source": true,
+      "resolution": {
+        "width": 1280,
+        "height": 720
+      }
+    },
+    {
+      "source": "/kaggle/working/g1-edu-stairs/reference-t4-s42/media/sanity-check/level-1-up-standard.mp4",
+      "path": "/kaggle/content/g1-edu-stairs/videos/reference-t4-s42/media/sanity-check/level-1-up-standard.mp4",
+      "sha256": "26a0b814200054d7f60ee978cfc05f5ec539625b8657e3bcd8cf27eb14a14585",
+      "matches_source": true,
+      "resolution": {
+        "width": 1280,
+        "height": 720
+      }
+    }
+  ]
+}

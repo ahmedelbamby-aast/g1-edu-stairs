@@ -1,0 +1,21 @@
+{
+  "status": "passed",
+  "optimizer_steps": 0,
+  "run_id": "round-trip-pilot-s42",
+  "restored_runs": 19,
+  "restore_failures": 0,
+  "headless_backend": "Agg",
+  "uploader_pid": 1474,
+  "uploader_detached": true,
+  "github": {
+    "repository": "ahmedelbamby-aast/g1-edu-stairs",
+    "write_access": true
+  },
+  "download_sha256_verified": true,
+  "downloaded_pngs_verified": 89,
+  "gallery_exists": true,
+  "credential_outside_results": true,
+  "credential_mode": "0600",
+  "published_run": "https://github.com/ahmedelbamby-aast/g1-edu-stairs/releases/tag/run-round-trip-pilot-s42",
+  "checked_at": 1794486533.7688947
+}

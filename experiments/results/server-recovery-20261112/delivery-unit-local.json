@@ -1,0 +1,17 @@
+{
+  "status": "passed",
+  "optimizer_steps": 0,
+  "checks": [
+    "upload_failure_retained",
+    "retry_success",
+    "pointer_published_last",
+    "unchanged_upload_skipped",
+    "developer_download_sha256",
+    "fresh_vm_restore",
+    "restore_idempotent",
+    "archive_traversal_and_links_rejected",
+    "corruption_rejected",
+    "credentials_outside_archives",
+    "pointer_failure_retry_preserves_versioned_payloads"
+  ]
+}
