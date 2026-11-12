@@ -65,14 +65,16 @@ def evaluation_metrics(report):
   for field in ("mean_risers_completed", "mean_best_single_support_s", "mean_slip_velocity_mps",
                 "mean_landing_force_n", "mean_up_speed_error_mps", "mean_down_speed_error_mps"):
     available = [cell for cell in cells if cell.get(field) is not None]
-    n = sum(cell["episodes"] for cell in available)
+    weight = {"mean_up_speed_error_mps": "up_speed_trials", "mean_down_speed_error_mps": "down_speed_trials"}.get(field, "episodes")
+    n = sum(cell.get(weight, cell["episodes"]) for cell in available)
     if n:
-      result[field] = sum(finite(cell[field]) * cell["episodes"] for cell in available) / n
+      result[field] = sum(finite(cell[field]) * cell.get(weight, cell["episodes"]) for cell in available) / n
   for field in ("mean_up_mps_on_completion", "mean_down_mps_on_completion"):
     available = [cell for cell in cells if cell.get(field) is not None]
-    n = sum(cell.get("completed_round_trips", cell.get("completions", 0)) for cell in available)
+    weight = "up_speed_completed_trials" if field.startswith("mean_up") else "down_speed_completed_trials"
+    n = sum(cell.get(weight, cell.get("completed_round_trips", cell.get("completions", 0))) for cell in available)
     if n:
-      result[field] = sum(finite(cell[field]) * cell.get("completed_round_trips", cell.get("completions", 0)) for cell in available) / n
+      result[field] = sum(finite(cell[field]) * cell.get(weight, cell.get("completed_round_trips", cell.get("completions", 0))) for cell in available) / n
   for metric, numerator, denominator in (("mean_slip_velocity_mps", "slip_velocity_sum_mps", "contact_samples"),
                                          ("mean_landing_force_n", "landing_force_sum_n", "landing_samples")):
     if all(numerator in cell and denominator in cell for cell in cells):

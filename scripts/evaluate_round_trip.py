@@ -129,6 +129,7 @@ def evaluate(args):
       n = int(finished.sum())
       actual_complete = actual[sample][finished]
       up_valid, down_valid = measured[sample, 0] > 0, measured[sample, 1] > 0
+      completed_up, completed_down = finished & up_valid, finished & down_valid
       slip_n, landing_n = int(contact_count[sample].sum()), int(landing_count[sample].sum())
       row = {
         "level": level, "course": COURSES[column], "depth": depths[column % len(depths)],
@@ -139,8 +140,10 @@ def evaluate(args):
         "counterclockwise_turns_completed": int(((turn_side[sample] > 0) & turned[sample]).sum()),
         "falls": int(falls[sample].sum()), "lane_exits": int(exits[sample].sum()),
         "timeouts": int(timeouts[sample].sum()), "mean_target_mps": float(target[sample].mean()),
-        "mean_up_mps_on_completion": float(actual_complete[:, 0].mean()) if n else None,
-        "mean_down_mps_on_completion": float(actual_complete[:, 1].mean()) if n else None,
+        "mean_up_mps_on_completion": float(actual[sample, 0][completed_up].mean()) if completed_up.any() else None,
+        "mean_down_mps_on_completion": float(actual[sample, 1][completed_down].mean()) if completed_down.any() else None,
+        "up_speed_completed_trials": int(completed_up.sum()), "down_speed_completed_trials": int(completed_down.sum()),
+        "up_speed_trials": int(up_valid.sum()), "down_speed_trials": int(down_valid.sum()),
         "phase_reached_counts": {phase.name.lower(): int(reached[sample, phase].sum()) for phase in Phase},
         "mean_risers_completed": float(risers[sample].mean()),
         "mean_best_single_support_s": float(hold[sample].mean()),
