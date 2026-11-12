@@ -1,0 +1,22 @@
+{
+  "status": "passed",
+  "optimizer_steps": 0,
+  "synthetic_runs": 3,
+  "historical_runs": [
+    "/kaggle/working/g1-edu-stairs/metrics-readiness-smoke-v1/historical/round-trip-pilot-s42",
+    "/kaggle/working/g1-edu-stairs/metrics-readiness-smoke-v1/historical/campus-refine-s42"
+  ],
+  "checks": [
+    "all_metric_plots",
+    "png_integrity",
+    "weighted_validation_rates",
+    "duplicate_event_merge",
+    "resumed_update_axis",
+    "wall_time_axis",
+    "train_validation_mse",
+    "empty_missing_values",
+    "failed_upload_retained",
+    "stale_ack_rejected",
+    "successful_ack_deduplicated"
+  ]
+}

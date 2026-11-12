@@ -63,3 +63,7 @@ The [mastery guide](../doc/stair-mastery.md) describes the adaptive curriculum, 
 | Run | Evidence |
 | --- | --- |
 | [Mastery inference smoke](results/mastery-smoke-v5/) | All 13 task entries passed; all ascent/descent phases and both turns checked. Each new task covered 324 geometry, depth, speed and level combinations. Zero optimizer steps. [Full recovery archive](https://github.com/ahmedelbamby-aast/g1-edu-stairs/releases/tag/run-mastery-smoke-v5) |
+
+## Automated metrics and publishing
+
+The [observability record](results/metrics-observability/) links raw reporting checks, historical curve plots, automated publishing receipts and local verification. [The guide](../doc/training-metrics.md) explains the no-agent scripts. No training was started during these checks. The VM is currently offline, so a fresh GPU preflight remains required.

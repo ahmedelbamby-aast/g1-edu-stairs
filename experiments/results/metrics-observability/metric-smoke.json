@@ -1,0 +1,21 @@
+{
+  "status": "passed",
+  "optimizer_steps": 0,
+  "synthetic_runs": 3,
+  "historical_runs": [],
+  "checks": [
+    "all_metric_plots",
+    "png_integrity",
+    "weighted_validation_rates",
+    "duplicate_event_merge",
+    "resumed_update_axis",
+    "wall_time_axis",
+    "train_validation_mse",
+    "empty_missing_values",
+    "failed_upload_retained",
+    "stale_ack_rejected",
+    "successful_ack_deduplicated",
+    "unobserved_specialist_speed_omitted",
+    "speed_error_trial_weighting"
+  ]
+}

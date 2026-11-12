@@ -1,0 +1,15 @@
+{
+  "status": "passed",
+  "optimizer_steps": 0,
+  "data_kind": "mocked orchestration",
+  "checks": [
+    "initialization_then_resume",
+    "two_suites_each_segment",
+    "expert_specific_evaluation",
+    "comparison_report_queued",
+    "failure_propagated_and_archived",
+    "gpu_telemetry_csv",
+    "nested_readiness_fixtures_excluded_from_training_catalog",
+    "raw_results_queued_after_plot_failure"
+  ]
+}

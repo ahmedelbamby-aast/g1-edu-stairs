@@ -1,0 +1,15 @@
+{
+  "status": "passed",
+  "optimizer_steps": 0,
+  "checks_passed": [
+    "metrics",
+    "workflow"
+  ],
+  "gpu_checks": "not_run",
+  "training_ready": false,
+  "full_evaluation": false,
+  "source_commit": "0a41cf1c406a62da3824f62ed380691f6ebeab5a",
+  "wall_time": 1794484468.5192084,
+  "github_upload": "queued_for_windows_publisher",
+  "launcher_guard": "passed"
+}
