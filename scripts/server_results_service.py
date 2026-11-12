@@ -9,8 +9,8 @@ import sys
 import time
 from pathlib import Path
 
-from scripts.github_delivery import DEFAULT_REPO, DEFAULT_TOKEN, GitHub, publish_run
-from scripts.training_metrics import atomic_json, finalize_run, pending, read_json, update_catalog
+from scripts.github_delivery import DEFAULT_REPO, DEFAULT_TOKEN, GitHub, github_environment, publish_run
+from scripts.training_metrics import SAFE_ID, atomic_json, finalize_run, pending, read_json, update_catalog
 
 
 def needs_export(run):
@@ -44,7 +44,7 @@ def cycle(root, scratch, github, state, run_id=None):
   for run in sorted(root.iterdir()):
     if run_id and run.name != run_id:
       continue
-    if not run.is_dir() or not needs_export(run):
+    if not run.is_dir() or not SAFE_ID.fullmatch(run.name) or not needs_export(run):
       continue
     item = state.setdefault("jobs", {}).setdefault(run.name, {})
     if item.get("retry_at", 0) > time.time():
@@ -160,6 +160,7 @@ def main():
   signal.signal(signal.SIGINT, stop)
   while not stopping:
     try:
+      github.environment = github_environment(args.token_file)
       cycle(args.root, args.scratch, github, state, args.run_id)
     except Exception as error:
       state.update(operation="retry_pending", error=str(error), heartbeat=time.time())

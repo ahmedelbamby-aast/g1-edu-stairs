@@ -64,7 +64,12 @@ def restore_release(release, root, scratch, github):
     staged = Path(staging) / run_id
     if not staged.is_dir():
       raise ValueError("Archive has no run directory")
-    shutil.move(str(staged), destination)
+    # Copy across filesystems into a hidden results staging directory, then
+    # expose the complete run with a same-filesystem atomic rename.
+    with tempfile.TemporaryDirectory(prefix=".restore-", dir=root) as landing:
+      complete = Path(landing) / run_id
+      shutil.move(str(staged), complete)
+      complete.rename(destination)
   receipt = {"run_id": run_id, "tag": tag, "sha256": expected, "archive": filename,
              "restored_at": time.time(), "status": "restored", "verified_restore": True}
   atomic_json(destination / "restore-receipt.json", receipt)

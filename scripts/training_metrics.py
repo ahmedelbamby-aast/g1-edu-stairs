@@ -213,10 +213,14 @@ def plot(rows, output, title):
 
 
 def export_run(run, output=None):
+  import subprocess
+  from importlib.metadata import version
   run = Path(run)
   output = Path(output) if output else run / "metrics"
   output.mkdir(parents=True, exist_ok=True)
   rows, summary = collect(run)
+  summary["exporter_source_commit"] = subprocess.check_output(["git", "rev-parse", "HEAD"], text=True).strip()
+  summary["reporting_versions"] = {name: version(name) for name in ("matplotlib", "tensorboard", "numpy")}
   write_csv(output / "scalars.csv", rows)
   summary["plots"] = plot(rows, output / "plots", f'{summary["data_kind"]}: {run.name}')
   atomic_json(output / "summary.json", summary)
@@ -266,7 +270,7 @@ def update_catalog(root):
   runs = []
   excluded_parts = {"fixtures", "metric-checks", "workflow-checks", "historical", "metrics"}
   for run in sorted(root.iterdir()):
-    if not run.is_dir() or not (run / "exit-code.txt").exists():
+    if not run.is_dir() or not SAFE_ID.fullmatch(run.name) or not (run / "exit-code.txt").exists():
       continue
     kind = read_json(run / "experiment.json", {}).get("data_kind")
     if kind is not None and kind not in ("training", "imitation"):
