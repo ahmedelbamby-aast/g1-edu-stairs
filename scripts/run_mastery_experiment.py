@@ -5,9 +5,10 @@ import json
 import os
 import subprocess
 import time
+from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 
-from scripts.training_metrics import atomic_json, compare, finalize_run, queue, update_catalog
+from scripts.training_metrics import SAFE_ID, atomic_json, compare, finalize_run, queue, update_catalog
 
 STAGES = {
   "ascent": "Unitree-G1-EDU-Stair-Expert-Ascent",
@@ -16,6 +17,26 @@ STAGES = {
   "round_trip": "Unitree-G1-EDU-Stair-Mastery",
   "student": "Unitree-G1-EDU-Stair-Student",
 }
+
+
+def evaluate_checkpoint(task, checkpoint, segment, episodes, completed_updates):
+  def run_suite(suite, gpu):
+    environment = {**os.environ, "CUDA_VISIBLE_DEVICES": str(gpu)}
+    output = segment / f"eval-{suite}.json"
+    command = ["bash", "scripts/kaggle_stairs.sh", "evaluate-round-trip", "--task", task,
+               "--checkpoint", str(checkpoint), "--onnx", str(checkpoint.parent / "policy.onnx"),
+               "--suite", suite, "--episodes-per-cell", str(episodes), "--output", str(output)]
+    with (segment / f"eval-{suite}.log").open("w", encoding="utf-8") as log:
+      subprocess.run(command, env=environment, stdout=log, stderr=subprocess.STDOUT, check=True)
+    result = json.loads(output.read_text(encoding="utf-8"))
+    result["completed_updates"] = completed_updates
+    atomic_json(output, result)
+
+  with ThreadPoolExecutor(max_workers=2) as pool:
+    clean = pool.submit(run_suite, "clean", 0)
+    stress = pool.submit(run_suite, "stress", 1)
+    clean.result()
+    stress.result()
 
 
 def main():
@@ -29,16 +50,17 @@ def main():
   parser.add_argument("--updates", type=int, default=500)
   parser.add_argument("--evaluate-every", type=int, default=100)
   parser.add_argument("--episodes-per-cell", type=int, default=8)
+  parser.add_argument("--performance-options", action="store_true")
   parser.add_argument("--plan-only", action="store_true")
   args = parser.parse_args()
-  if not args.run_id.replace("-", "").replace("_", "").isalnum():
+  if not SAFE_ID.fullmatch(args.run_id):
     parser.error("Use letters, numbers, hyphens and underscores for the run ID")
   if min(args.updates, args.evaluate_every) < 1 or args.episodes_per_cell < 2 or args.episodes_per_cell % 2:
     parser.error("Use positive update counts and an even episode count of at least two")
   print(json.dumps({
     "stage": args.stage, "task": STAGES[args.stage], "updates": args.updates,
     "evaluate_every": args.evaluate_every, "seed": args.seed,
-    "run_prefix": args.run_id, "plan_only": args.plan_only,
+    "run_prefix": args.run_id, "plan_only": args.plan_only, "performance_options": args.performance_options,
   }, indent=2))
   if args.plan_only:
     return
@@ -49,7 +71,9 @@ def main():
   (report / "git-commit.txt").write_text(commit + "\n", encoding="utf-8")
   atomic_json(report / "experiment.json", {"experiment_id": args.run_id, "stage": args.stage,
               "seed": args.seed, "planned_updates": args.updates, "started_at": time.time(),
-              "data_kind": "experiment-comparison"})
+              "data_kind": "experiment-comparison", "performance_options": args.performance_options,
+              "initial_checkpoint": str(args.resume_checkpoint) if args.resume_checkpoint else None,
+              "initial_actor": str(args.init_actor_onnx) if args.init_actor_onnx else None})
   remaining = args.updates
   checkpoint = args.resume_checkpoint
   completed = 0
@@ -63,22 +87,20 @@ def main():
                    "STAIRS_END_UPDATE": str(completed + updates), "STAIRS_STAGE": args.stage,
                    "STAIRS_DEFER_REPORT": "1"}
     initialization = (
-      ["--resume-checkpoint", str(checkpoint)] if checkpoint else
+      ["--resume-checkpoint", str(checkpoint), "--resume-after-saved-update", "True"] if checkpoint else
       ["--init-actor-onnx", str(args.init_actor_onnx)]
     )
     status = 1
+    performance = ["--record-performance", "True"]
+    if args.performance_options:
+      performance.extend(["--omit-unused-teacher-observations", "True", "--branchless-history", "True",
+                          "--fast-foot-positions", "True"])
     try:
-      subprocess.run(["bash", "scripts/run_kaggle_mastery.sh", run_id, *initialization],
+      subprocess.run(["bash", "scripts/run_kaggle_mastery.sh", run_id, *initialization, *performance],
                      env=environment, check=True)
       checkpoints = list((root / run_id).rglob("model_*.pt"))
       checkpoint = max(checkpoints, key=lambda p: int(p.stem.split("_")[-1]))
-      for suite in ("clean", "stress"):
-        subprocess.run([
-          "bash", "scripts/kaggle_stairs.sh", "evaluate-round-trip", "--task", STAGES[args.stage],
-          "--checkpoint", str(checkpoint), "--onnx", str(checkpoint.parent / "policy.onnx"),
-          "--suite", suite, "--episodes-per-cell", str(args.episodes_per_cell),
-          "--output", str(root / run_id / f"eval-{suite}.json"),
-        ], check=True)
+      evaluate_checkpoint(STAGES[args.stage], checkpoint, root / run_id, args.episodes_per_cell, completed + updates)
       status = 0
     finally:
       segment = root / run_id

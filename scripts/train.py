@@ -28,6 +28,7 @@ class TrainConfig:
   agent: RslRlBaseRunnerCfg
   motion_file: str | None = None
   resume_checkpoint: str | None = None
+  resume_after_saved_update: bool = False
   init_actor_onnx: str | None = None
   randomize_initial_episode_length: bool = True
   video: bool = False
@@ -157,11 +158,14 @@ def run_train(task_id: str, cfg: TrainConfig, log_dir: Path) -> None:
   if resume_path is not None:
     print(f"[INFO]: Loading model checkpoint from: {resume_path}")
     runner.load(str(resume_path), map_location=device)
+    if cfg.resume_after_saved_update:
+      runner.current_learning_iteration += 1
     if rank == 0:
       with resume_path.open("rb") as checkpoint:
         digest = hashlib.file_digest(checkpoint, "sha256").hexdigest()
       dump_yaml(log_dir / "params" / "resume.yaml", {
         "checkpoint": str(resume_path), "sha256": digest,
+        "next_iteration": runner.current_learning_iteration,
       })
   if cfg.init_actor_onnx is not None:
     path = Path(cfg.init_actor_onnx).expanduser().resolve(strict=True)
