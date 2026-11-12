@@ -5,7 +5,8 @@ param(
   [int]$Port = 9191,
   [string]$IdentityFile = "$env:USERPROFILE/.ssh/id_ed25519",
   [string]$ZrokPath,
-  [switch]$Bootstrap
+  [switch]$Bootstrap,
+  [switch]$ReplaceTunnel
 )
 
 $ErrorActionPreference = 'Stop'
@@ -32,7 +33,10 @@ try {
   if ($listener -and !(Get-VerifiedHost)) {
     $ownedPid = if (Test-Path -LiteralPath $pidFile) { Get-Content -LiteralPath $pidFile -Raw }
     $process = Get-Process -Id $listener.OwningProcess -ErrorAction SilentlyContinue
-    if ($ownedPid -and $ownedPid.Trim() -eq "$($listener.OwningProcess)" -and $process.ProcessName -eq 'zrok2') {
+    $owned = $ownedPid -and $ownedPid.Trim() -eq "$($listener.OwningProcess)"
+    $command = (Get-CimInstance Win32_Process -Filter "ProcessId=$($listener.OwningProcess)").CommandLine
+    $expectedTunnel = $command -match "access\s+private\s+[A-Za-z0-9_-]+\s+--bind\s+127\.0\.0\.1:$Port(?:\s|$)"
+    if (($owned -or ($ReplaceTunnel -and $expectedTunnel)) -and $process.ProcessName -eq 'zrok2') {
       Stop-Process -Id $process.Id
       $process.WaitForExit(5000) | Out-Null
       $listener = $null

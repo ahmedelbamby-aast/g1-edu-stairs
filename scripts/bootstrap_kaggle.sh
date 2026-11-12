@@ -10,6 +10,7 @@ export PATH="$scratch/bin:$PATH"
 packages=()
 command -v curl >/dev/null || packages+=(curl ca-certificates)
 command -v ffmpeg >/dev/null || packages+=(ffmpeg)
+command -v gh >/dev/null || packages+=(gh)
 if ! ldconfig -p | awk '/libOSMesa\.so/ { found=1 } END { exit !found }'; then
   packages+=(libosmesa6)
 fi
@@ -30,11 +31,21 @@ bash scripts/kaggle_stairs.sh install
 export LD_LIBRARY_PATH="/usr/local/nvidia/lib64${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}"
 export MUJOCO_GL=osmesa
 export OMP_NUM_THREADS=2 OPENBLAS_NUM_THREADS=2 MKL_NUM_THREADS=2
+export MPLBACKEND=Agg MPLCONFIGDIR="$scratch/cache/matplotlib"
 .venv/bin/python - <<'PY'
 import torch
 import mujoco
 import mujoco_warp
 import mjlab
+import matplotlib
+matplotlib.use("Agg", force=True)
+import matplotlib.pyplot as plt
+
+figure, axis = plt.subplots()
+axis.plot([0, 1], [0, 1])
+figure.savefig("/codex_download_here_work_here/plot-bootstrap-check.png")
+plt.close(figure)
+print("Headless PNG plotting is available.")
 
 devices = torch.cuda.device_count()
 if not devices:

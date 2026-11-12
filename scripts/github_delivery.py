@@ -91,7 +91,7 @@ def safe_members(archive, run_id):
   members = archive.getmembers()
   for member in members:
     path = PurePosixPath(member.name)
-    if (path.is_absolute() or ".." in path.parts or "\\" in member.name or ":" in member.name
+    if (path.is_absolute() or ".." in path.parts or "\\" in member.name or (os.name == "nt" and ":" in member.name)
         or not path.parts or path.parts[0] != run_id or not (member.isfile() or member.isdir())):
       raise ValueError("Archive contains an unsafe path, link or special file")
   return members
@@ -140,13 +140,15 @@ def publish_run(run, scratch, github):
   directory = scratch / "delivery" / run.name / suffix
   directory.mkdir(parents=True, exist_ok=True)
   full = directory / f"{run.name}-{suffix}.tar.gz"
-  create_snapshot(run, full)
+  if not full.exists():
+    create_snapshot(run, full)
   payloads = [(full, "full_run")]
   report = run / "metrics-report.zip"
   if report.exists():
     import shutil
     quick = directory / f"{run.name}-metrics-{suffix}.zip"
-    shutil.copy2(report, quick)
+    if not quick.exists():
+      shutil.copy2(report, quick)
     payloads.append((quick, "metrics"))
   files = [{"name": path.name, "kind": kind, "bytes": path.stat().st_size, "sha256": sha256(path)}
            for path, kind in payloads]
@@ -157,7 +159,10 @@ def publish_run(run, scratch, github):
                         for item in files], "checksum_file": checksum.name, "published_at": time.time(),
               "plot_gallery": "Unzip the metrics asset and open metrics/plots/index.html"}
   immutable_manifest = directory / f"{run.name}-{suffix}.manifest.json"
-  atomic_json(immutable_manifest, manifest)
+  if immutable_manifest.exists():
+    manifest = read_json(immutable_manifest)
+  else:
+    atomic_json(immutable_manifest, manifest)
   pointer = directory / "downloads.json"
   atomic_json(pointer, manifest)
   if read_json(run / "publish-ready.json")["digest"] != ready["digest"]:
@@ -172,7 +177,16 @@ def publish_run(run, scratch, github):
     github.call("release", "create", tag, "--repo", github.repo, "--target", commit,
                 "--title", f"G1 EDU | {run.name}", "--latest=false", "--notes-file", notes)
   payload_paths = [path for path, _ in payloads] + [checksum, immutable_manifest]
-  github.call("release", "upload", tag, *payload_paths, "--repo", github.repo, "--clobber")
+  known = {asset["name"]: asset for asset in github.release(tag)["assets"]}
+  missing = []
+  for path in payload_paths:
+    asset = known.get(path.name)
+    if asset is None:
+      missing.append(path)
+    elif asset["size"] != path.stat().st_size or (asset.get("digest") and asset["digest"] != "sha256:" + sha256(path)):
+      raise RuntimeError("An immutable asset differs from the local snapshot; refusing to replace it")
+  if missing:
+    github.call("release", "upload", tag, *missing, "--repo", github.repo)
   uploaded = github.release(tag)
   sizes = {asset["name"]: asset["size"] for asset in uploaded["assets"]}
   if any(sizes.get(path.name) != path.stat().st_size for path in payload_paths):
