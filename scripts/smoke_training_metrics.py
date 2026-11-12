@@ -4,6 +4,7 @@ import argparse
 import json
 import shutil
 import subprocess
+import sys
 from pathlib import Path
 
 from PIL import Image
@@ -55,7 +56,7 @@ def main():
     assert pending(fixtures)
     # Simulate a failed upload: no acknowledgement means the same digest remains pending.
     assert next(item for item in pending(fixtures) if item["run_id"] == run.name)["digest"] == queued["digest"]
-    command = [".venv/bin/python", "-m", "scripts.training_metrics", "acknowledge", "--root", str(fixtures),
+    command = [sys.executable, "-m", "scripts.training_metrics", "acknowledge", "--root", str(fixtures),
                "--run-id", run.name, "--digest", queued["digest"], "--url", "https://github.com/example/synthetic"]
     bad = subprocess.run([*command[:], "--digest", "0" * 64], capture_output=True)
     assert bad.returncode != 0 and not (run / "publish-receipt.json").exists()
@@ -76,6 +77,14 @@ def main():
     raise AssertionError("Empty evaluation was accepted")
   except ValueError:
     pass
+  specialized = evaluation_metrics({"cells": [{"episodes": 2, "completions": 2,
+      "mean_up_mps_on_completion": None, "mean_down_mps_on_completion": None,
+      "up_speed_completed_trials": 0, "down_speed_completed_trials": 0}]})
+  assert specialized["success_rate"] == 1. and "mean_up_mps_on_completion" not in specialized
+  weighted = evaluation_metrics({"cells": [
+      {"episodes": 10, "completions": 1, "up_speed_trials": 1, "mean_up_speed_error_mps": .2},
+      {"episodes": 10, "completions": 9, "up_speed_trials": 9, "mean_up_speed_error_mps": .8}]})
+  assert abs(weighted["mean_up_speed_error_mps"] - .74) < 1e-12
   # A log-free check must report missing values, never fabricate a flat loss curve.
   empty = fixtures / "empty"
   empty.mkdir()
@@ -102,7 +111,8 @@ def main():
       "synthetic_runs": 3, "historical_runs": [str(path) for path in history],
       "checks": ["all_metric_plots", "png_integrity", "weighted_validation_rates", "duplicate_event_merge",
                  "resumed_update_axis", "wall_time_axis", "train_validation_mse", "empty_missing_values",
-                 "failed_upload_retained", "stale_ack_rejected", "successful_ack_deduplicated"]})
+                 "failed_upload_retained", "stale_ack_rejected", "successful_ack_deduplicated",
+                 "unobserved_specialist_speed_omitted", "speed_error_trial_weighting"]})
   (args.output / "git-commit.txt").write_text(commit + "\n", encoding="utf-8")
   (args.output / "exit-code.txt").write_text("0\n", encoding="utf-8")
   queue(args.output)

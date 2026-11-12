@@ -268,6 +268,9 @@ def queue(run):
     raise ValueError("A publication needs a safe run ID and a completion marker")
   from zipfile import ZipFile, ZIP_DEFLATED
   with ZipFile(run / "metrics-report.zip", "w", compression=ZIP_DEFLATED) as archive:
+    for name in ("readiness.json", "experiment.json", "README.md"):
+      if (run / name).is_file():
+        archive.write(run / name, name)
     for folder in (run / "metrics", run / "comparison"):
       for path in sorted(folder.rglob("*")):
         if path.is_file():
