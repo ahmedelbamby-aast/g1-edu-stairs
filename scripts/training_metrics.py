@@ -248,10 +248,18 @@ def compare(runs, output):
 def update_catalog(root):
   import subprocess
   catalog = root / "experiment-comparisons"
-  runs = [run for run in sorted(root.iterdir()) if run.is_dir() and
-          (run / "exit-code.txt").exists() and
-          (any(run.rglob("events.out.tfevents*")) or (run / "imitation.jsonl").exists()) and
-          read_json(run / "experiment.json", {}).get("data_kind") != "synthetic-smoke"]
+  runs = []
+  excluded_parts = {"fixtures", "metric-checks", "workflow-checks", "historical", "metrics"}
+  for run in sorted(root.iterdir()):
+    if not run.is_dir() or not (run / "exit-code.txt").exists():
+      continue
+    kind = read_json(run / "experiment.json", {}).get("data_kind")
+    if kind is not None and kind not in ("training", "imitation"):
+      continue
+    events = [path for path in run.rglob("events.out.tfevents*")
+              if not excluded_parts.intersection(path.relative_to(run).parts)]
+    if events or (run / "imitation.jsonl").exists():
+      runs.append(run)
   if not runs:
     return
   compare(runs, catalog / "metrics")

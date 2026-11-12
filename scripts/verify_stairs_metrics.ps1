@@ -11,7 +11,8 @@ try {
   if (-not (Test-Path $python)) {
     uv venv --python 3.12 $venv
     if ($LASTEXITCODE -ne 0) { throw 'Could not create the isolated metrics environment.' }
-    uv pip install --python $python -r experiments/requirements-metrics.txt
+    $requirements = if (Test-Path 'experiments/requirements-metrics.lock.txt') { 'experiments/requirements-metrics.lock.txt' } else { 'experiments/requirements-metrics.txt' }
+    uv pip install --python $python -r $requirements
     if ($LASTEXITCODE -ne 0) { throw 'Could not install reporting dependencies.' }
   }
   $run = Join-Path $root "outputs/$RunId"

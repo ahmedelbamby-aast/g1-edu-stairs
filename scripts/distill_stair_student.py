@@ -68,10 +68,11 @@ def main():
   atomic_json(args.output / "experiment.json", {"experiment_id": args.output.name,
               "data_kind": "check-only" if args.check_only else "imitation", "started_at": started,
               "stage": "student", "seed": args.seed})
-  env = ManagerBasedRlEnv(cfg, device=args.device)
+  env = None
   validator = None
   status = 1
   try:
+    env = ManagerBasedRlEnv(cfg, device=args.device)
     wrapped = RslRlVecEnvWrapper(env, clip_actions=agent.clip_actions)
     runner = MasteryRunner(wrapped, asdict(agent), str(args.output), args.device)
     manifest["initial_actor"] = runner.initialize_actor(args.init_actor_onnx)
@@ -158,7 +159,8 @@ def main():
   finally:
     if validator is not None:
       validator.close()
-    env.close()
+    if env is not None:
+      env.close()
     (args.output / "distillation.json").write_text(json.dumps(manifest, indent=2) + "\n", encoding="utf-8")
     (args.output / "git-commit.txt").write_text(manifest["source_commit"] + "\n", encoding="utf-8")
     (args.output / "exit-code.txt").write_text(str(status) + "\n", encoding="utf-8")

@@ -10,7 +10,7 @@ from unittest.mock import patch
 from scripts.smoke_training_metrics import fixture_writer
 
 from scripts import run_mastery_experiment
-from scripts.training_metrics import atomic_json, collect, pending, read_json
+from scripts.training_metrics import atomic_json, collect, pending, read_json, update_catalog
 
 
 def main():
@@ -81,9 +81,20 @@ def main():
     pass
   assert (args.output / "synthetic-failure-u0001" / "workflow-exit-code.txt").read_text().strip() == "1"
   assert len(pending(args.output)) == 5
+  for name, metadata in (("readiness-container", {"data_kind": "readiness-checks"}), ("legacy-smoke-container", None)):
+    container = args.output / name
+    container.mkdir()
+    (container / "exit-code.txt").write_text("0\n", encoding="utf-8")
+    if metadata:
+      atomic_json(container / "experiment.json", metadata)
+    with fixture_writer(container / "fixtures" / "synthetic") as writer:
+      writer.add_scalar("Loss/value", 1., 0, walltime=1000.)
+  update_catalog(args.output)
+  assert not (args.output / "experiment-comparisons").exists(), "Readiness fixtures leaked into the training catalog"
   atomic_json(args.output / "smoke.json", {"status": "passed", "optimizer_steps": 0,
       "data_kind": "mocked orchestration", "checks": ["initialization_then_resume", "two_suites_each_segment",
-      "expert_specific_evaluation", "comparison_report_queued", "failure_propagated_and_archived", "gpu_telemetry_csv"]})
+      "expert_specific_evaluation", "comparison_report_queued", "failure_propagated_and_archived", "gpu_telemetry_csv",
+      "nested_readiness_fixtures_excluded_from_training_catalog"]})
   print("PASS mocked experiment orchestration; no training producer executed")
 
 
