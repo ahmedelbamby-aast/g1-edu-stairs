@@ -94,7 +94,7 @@ def main():
     status = 0
   finally:
     report = {"status": "passed" if status == 0 else "failed", "optimizer_steps": 0, "checks_passed": checks,
-              "gpu_checks": "passed" if args.gpu and status == 0 else "not_completed",
+              "gpu_checks": ("passed" if status == 0 else "failed") if args.gpu else "not_run",
               "training_ready": args.gpu and status == 0, "full_evaluation": args.full_evaluation,
               "source_commit": commit, "wall_time": time.time(), "github_upload": "queued_for_windows_publisher"}
     atomic_json(args.output / "readiness.json", report)
