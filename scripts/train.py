@@ -4,6 +4,7 @@ import hashlib
 import logging
 import os
 import sys
+from contextlib import nullcontext
 from dataclasses import asdict, dataclass, field
 from datetime import datetime
 from pathlib import Path
@@ -35,6 +36,10 @@ class TrainConfig:
   enable_nan_guard: bool = False
   torchrunx_log_dir: str | None = None
   gpu_ids: list[int] | Literal["all"] | None = field(default_factory=lambda: [0])
+  profile_loop: bool = False
+  profile_wait: int = 3
+  profile_active: int = 2
+  omit_unused_teacher_observations: bool = False
 
   @staticmethod
   def from_task(task_id: str) -> "TrainConfig":
@@ -92,6 +97,12 @@ def run_train(task_id: str, cfg: TrainConfig, log_dir: Path) -> None:
 
   if rank == 0:
     print(f"[INFO] Logging experiment in directory: {log_dir}")
+
+  if cfg.omit_unused_teacher_observations:
+    consumed = {name for names in cfg.agent.obs_groups.values() for name in names}
+    if "teacher" not in consumed:
+      cfg.env.observations.pop("teacher", None)
+      print("[INFO] Skipped unused teacher stream; actor and critic inputs are retained.")
 
   env = ManagerBasedRlEnv(
     cfg=cfg.env, device=device, render_mode="rgb_array" if cfg.video else None
@@ -159,10 +170,18 @@ def run_train(task_id: str, cfg: TrainConfig, log_dir: Path) -> None:
   if write_run_audit is not None:
     write_run_audit(log_dir, rank)
 
-  runner.learn(
-    num_learning_iterations=cfg.agent.max_iterations,
-    init_at_random_ep_len=cfg.randomize_initial_episode_length,
-  )
+  if cfg.profile_loop:
+    from scripts.profile_rl_loop import profile_rl_loop
+    if cfg.agent.max_iterations < cfg.profile_wait + 1 + cfg.profile_active:
+      raise ValueError("The profile needs enough warmup and active updates")
+    profiling = profile_rl_loop(runner, log_dir, rank, cfg.profile_wait, cfg.profile_active)
+  else:
+    profiling = nullcontext()
+  with profiling:
+    runner.learn(
+      num_learning_iterations=cfg.agent.max_iterations,
+      init_at_random_ep_len=cfg.randomize_initial_episode_length,
+    )
 
   env.close()
 
