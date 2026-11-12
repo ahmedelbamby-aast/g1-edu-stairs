@@ -53,6 +53,7 @@ class CampusSkillCfg(CommandTermCfg):
   finish_max_speed_mps: float = .25
   drill_timeout_s: float = 8.0
   lane_margin_m: float = .16
+  fast_foot_positions: bool = False
 
   def build(self, env):
     return CampusSkill(self, env)
@@ -67,6 +68,7 @@ class CampusSkill(CommandTerm):
     self.terrain = terrain
     self.robot = env.scene["robot"]
     self.foot_ids, names = self.robot.find_sites(("left_foot", "right_foot"), preserve_order=True)
+    self.global_foot_ids = self.robot.indexing.site_ids[self.foot_ids]
     if tuple(names) != ("left_foot", "right_foot"):
       raise ValueError("Campus skills require left and right G1 foot sites in SDK order")
     if cfg.fixed_level is not None and not 0 <= cfg.fixed_level < len(DIFFICULTIES):
@@ -141,7 +143,8 @@ class CampusSkill(CommandTerm):
     return {**extras, **super().reset(env_ids)}
 
   def _feet(self):
-    feet = self.robot.data.site_pos_w[:, self.foot_ids]
+    feet = (self._env.sim.data.site_xpos[:, self.global_foot_ids] if self.cfg.fast_foot_positions
+            else self.robot.data.site_pos_w[:, self.foot_ids])
     sensor = self._env.scene["feet_ground_contact"].data
     force = sensor.force[..., 2].abs()
     return feet, (sensor.found > 0), force

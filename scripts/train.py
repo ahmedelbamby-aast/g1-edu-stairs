@@ -41,6 +41,8 @@ class TrainConfig:
   profile_active: int = 2
   omit_unused_teacher_observations: bool = False
   record_performance: bool = False
+  branchless_history: bool = False
+  fast_foot_positions: bool = False
 
   @staticmethod
   def from_task(task_id: str) -> "TrainConfig":
@@ -104,6 +106,14 @@ def run_train(task_id: str, cfg: TrainConfig, log_dir: Path) -> None:
     if "teacher" not in consumed:
       cfg.env.observations.pop("teacher", None)
       print("[INFO] Skipped unused teacher stream; actor and critic inputs are retained.")
+  if cfg.branchless_history:
+    from src.tasks.stair_mastery.performance import set_branchless_history
+    set_branchless_history(True)
+  if cfg.fast_foot_positions:
+    skill_cfg = cfg.env.commands.get("skill")
+    if not hasattr(skill_cfg, "fast_foot_positions"):
+      raise ValueError("Fast foot positions require a campus-derived skill")
+    skill_cfg.fast_foot_positions = True
 
   env = ManagerBasedRlEnv(
     cfg=cfg.env, device=device, render_mode="rgb_array" if cfg.video else None
@@ -166,6 +176,11 @@ def run_train(task_id: str, cfg: TrainConfig, log_dir: Path) -> None:
   if rank == 0:
     dump_yaml(log_dir / "params" / "env.yaml", env_cfg)
     dump_yaml(log_dir / "params" / "agent.yaml", agent_cfg)
+    dump_yaml(log_dir / "params" / "performance.yaml", {
+      "omit_unused_teacher_observations": cfg.omit_unused_teacher_observations,
+      "branchless_history": cfg.branchless_history, "fast_foot_positions": cfg.fast_foot_positions,
+      "record_performance": cfg.record_performance, "profile_loop": cfg.profile_loop,
+    })
 
   write_run_audit = getattr(runner, "write_run_audit", None)
   if write_run_audit is not None:

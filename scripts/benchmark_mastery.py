@@ -55,6 +55,8 @@ def main():
   parser.add_argument("--threads", type=int, default=2)
   parser.add_argument("--updates", type=int, default=12)
   parser.add_argument("--omit-unused-teacher", action="store_true")
+  parser.add_argument("--branchless-history", action="store_true")
+  parser.add_argument("--fast-foot-positions", action="store_true")
   parser.add_argument("--timeout", type=int, default=600)
   args = parser.parse_args()
   root = Path(os.environ.get("STAIRS_RESULTS", "/kaggle/working/g1-edu-stairs"))
@@ -67,7 +69,8 @@ def main():
                    "ITERATIONS": str(args.updates), "SAVE_INTERVAL": str(args.updates),
                    "STAIRS_DEFER_REPORT": "1", "STAIRS_DATA_KIND": "performance-benchmark"}
     command = ["bash", "scripts/run_kaggle_mastery.sh", run_id, "--init-actor-onnx", str(args.teacher_onnx),
-               "--record-performance", "True", "--omit-unused-teacher-observations", str(args.omit_unused_teacher)]
+               "--record-performance", "True", "--omit-unused-teacher-observations", str(args.omit_unused_teacher),
+               "--branchless-history", str(args.branchless_history), "--fast-foot-positions", str(args.fast_foot_positions)]
     with (output / f"{run_id}.launch.log").open("w") as log:
       process = subprocess.Popen(command, env=environment, stdout=log, stderr=subprocess.STDOUT, start_new_session=True)
       try:
@@ -83,6 +86,7 @@ def main():
       result = {"run": run_id, "status": "failed", "exit_code": status}
     else:
       result = summarize(root / run_id, worlds, args.threads, args.omit_unused_teacher, 3)
+      result.update(branchless_history=args.branchless_history, fast_foot_positions=args.fast_foot_positions)
     results.append(result)
     atomic_json(output / "benchmark.json", {"trials": results})
     print(json.dumps(result), flush=True)
