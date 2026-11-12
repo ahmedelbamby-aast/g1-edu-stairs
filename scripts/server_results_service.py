@@ -135,11 +135,16 @@ def main():
     with (service / "results-service.log").open("a", encoding="utf-8") as log:
       process = subprocess.Popen(arguments, stdin=subprocess.DEVNULL, stdout=log, stderr=subprocess.STDOUT,
                                  start_new_session=True)
-    time.sleep(1)
-    if process.poll() is not None:
-      raise RuntimeError("Results service exited; inspect results-service.log")
-    print(f"Started independent GPU-server result service as PID {process.pid}")
-    return
+    deadline = time.time() + 45
+    while time.time() < deadline:
+      if process.poll() is not None:
+        raise RuntimeError("Results service exited; inspect results-service.log")
+      ready = read_json(status_path, {})
+      if ready.get("pid") == process.pid and ready.get("rendering", {}).get("png") == "passed":
+        print(f"Started independent GPU-server result service as PID {process.pid}")
+        return
+      time.sleep(.25)
+    raise RuntimeError("Results service is still initializing; inspect its status before launching another worker")
   # Linux VM singleton, so reconnection cannot create duplicate workers.
   import fcntl
   lock = (service / "results-service.lock").open("a")

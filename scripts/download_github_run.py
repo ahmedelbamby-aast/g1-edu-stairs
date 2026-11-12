@@ -2,6 +2,7 @@
 
 import argparse
 import json
+import re
 import stat
 import time
 from pathlib import Path, PurePosixPath
@@ -19,6 +20,8 @@ def download_snapshot(github, run_id, output, kind="metrics", extract=True):
   manifest = read_json(github.download(tag, "downloads.json", output))
   if manifest["run_id"] != run_id:
     raise ValueError("Download manifest belongs to a different run")
+  if not re.fullmatch(r"[a-f0-9]{64}", manifest["content_digest"]):
+    raise ValueError("Invalid snapshot digest")
   items = [item for item in manifest["files"] if item["kind"] == kind]
   if len(items) != 1:
     raise ValueError("Requested artifact is not present in the download manifest")
@@ -38,7 +41,10 @@ def download_snapshot(github, run_id, output, kind="metrics", extract=True):
         if name.is_absolute() or ".." in name.parts or "\\" in info.filename or ":" in info.filename or stat.S_ISLNK(info.external_attr >> 16):
           raise ValueError("Report ZIP contains an unsafe path or link")
       archive.extractall(target)
-    result["gallery"] = str((target / "metrics" / "plots" / "index.html").resolve())
+    gallery = target / "metrics" / "plots" / "index.html"
+    result["gallery"] = str(gallery.resolve()) if gallery.is_file() else None
+    if not gallery.is_file():
+      result["note"] = "This snapshot has no plot gallery; check the full-run diagnostics."
   return result
 
 

@@ -96,7 +96,7 @@ def main():
     report = {"status": "passed" if status == 0 else "failed", "optimizer_steps": 0, "checks_passed": checks,
               "gpu_checks": ("passed" if status == 0 else "failed") if args.gpu else "not_run",
               "training_ready": args.gpu and status == 0, "full_evaluation": args.full_evaluation,
-              "source_commit": commit, "wall_time": time.time(), "github_upload": "queued_for_windows_publisher"}
+              "source_commit": commit, "wall_time": time.time(), "github_upload": "queued_for_result_publisher"}
     atomic_json(args.output / "readiness.json", report)
     atomic_json(args.output / "experiment.json", {"data_kind": "readiness-checks", "source_commit": commit})
     (args.output / "exit-code.txt").write_text(str(status) + "\n", encoding="utf-8")
